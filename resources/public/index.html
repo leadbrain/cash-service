@@ -1,0 +1,19 @@
+<html ng-app>
+  <head>
+    <meta charset="utf-8">
+    <title>Cash Plan</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"/></script>
+		<script src="app.js"></script>
+	</head>
+	<body ng-controller="todoController">
+    <p> Cash Plan </p>
+		<ul>
+			<li ng-repeat="data in datas">
+				{{data.item}} {{data.money}}
+			</li>
+		</ul>
+		<input type="text" placeholder ="내용" ng-model="item">
+    <input type="text" placeholder ="가격" ng-model="money">
+		<input type="button" value="입력" ng-click="addTodo()">
+	</body>
+</html>
