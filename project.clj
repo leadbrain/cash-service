@@ -9,7 +9,8 @@
                  [ring/ring-json "0.4.0"]
                  [cheshire "5.5.0"]
                  [yesql "0.5.3"]
-                 [com.h2database/h2 "1.4.191"]]
+                 [com.h2database/h2 "1.4.191"]
+                 [clj-http "3.0.1"]]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:init cash-service.handler/init
          :handler cash-service.handler/app}

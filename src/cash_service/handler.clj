@@ -4,7 +4,9 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :as ring-json]
             [ring.util.response :as res]
-            [cash-service.db-handler :refer :all]))
+            [cheshire.core :as json]
+            [cash-service.db-handler :refer :all]
+            [clj-http.client :as http]))
 
 (defn init []
   (create-table!))
@@ -14,7 +16,8 @@
 
 (defroutes app-routes
   (GET "/" []
-       "Hello World")
+       (let [response (http/get "https://www.infraware.net/ajax/boards/GetRestaurantmenuImage")]
+            (res/redirect (:url (json/parse-string (:body response) true)))))
 
   (POST "/api/v0.1/data/" request
         (set-data<! (get-in request [:body]))
