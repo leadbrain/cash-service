@@ -20,7 +20,7 @@
   (testing "main route"
     (let [response (app (mock/request :get "/"))]
       (is (= (:status response) 200))
-      (is (= (:body response) "Hello World"))))
+      (is (= (:body response) "Hello"))))
 
   (testing "data post"
     (let [response (app (json-request :post "/api/v0.1/data/" {:item "test" :money 3000}))]

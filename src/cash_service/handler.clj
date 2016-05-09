@@ -16,6 +16,9 @@
 
 (defroutes app-routes
   (GET "/" []
+       "Hello")
+
+  (GET "/bob" []
        (let [response (http/get "https://www.infraware.net/ajax/boards/GetRestaurantmenuImage")]
             (res/redirect (:url (json/parse-string (:body response) true)))))
 
