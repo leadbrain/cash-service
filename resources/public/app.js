@@ -4,7 +4,7 @@ function todoController($scope, $http) {
   });
 
   $scope.addTodo = function() {
-    if ($scope.item && $scope.money) {
+    if (($scope.item && $scope.money) && isNaN($scope.money) == false) {
       var data = {"item" : $scope.item,
                   "money" : $scope.money};
       $scope.datas.push(data);
@@ -12,7 +12,7 @@ function todoController($scope, $http) {
       $scope.item = null;
       $scope.money = null;
     }	else {
-      alert('값을 입력해주세요!');
+      alert('올바른 값을 입력해주세요!');
     }
   };
 }
