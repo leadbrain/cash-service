@@ -9,10 +9,12 @@
             [clj-http.client :as http]))
 
 (defn init []
-  (create-table!))
+  (create-data-table!)
+  (create-category-table!))
 
 (defn destroy []
-  (drop-table!))
+  (drop-table!)
+  (drop-category-table!))
 
 (defroutes app-routes
   (GET "/" []
@@ -28,6 +30,13 @@
 
   (GET "/api/v0.1/data/" []
        (res/response (get-data)))
+
+  (POST "/api/v0.1/category/" request
+        (set-category<! (get-in request [:body]))
+        (res/response {:result "OK"}))
+
+  (GET "/api/v0.1/category/" []
+       (res/response (conj (get-category) {:id 0 :name "none"})))
 
   (route/not-found "Not Found"))
 
