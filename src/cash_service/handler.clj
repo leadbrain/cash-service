@@ -16,6 +16,12 @@
   (drop-table!)
   (drop-category-table!))
 
+(defn contain-category? [array category]
+  (not-empty (filter #(= category (% :id)) array)))
+
+(defn get-category-list []
+  (conj (get-category) {:id 0 :name "none"}))
+
 (defroutes app-routes
   (GET "/" []
        "Hello")
@@ -25,8 +31,12 @@
             (res/redirect (:url (json/parse-string (:body response) true)))))
 
   (POST "/api/v0.1/data/" request
-        (set-data<! (get-in request [:body]))
-        (res/response {:result "OK"}))
+        (let [category_list (get-category-list) category (get-in request [:body :category])]
+          (if (contain-category? category_list category)
+            (set-data<! (get-in request [:body])))
+          (if (contain-category? category_list category)
+            (res/response {:result "OK"})
+            (res/response {:result "Error"}))))
 
   (GET "/api/v0.1/data/" []
        (res/response (get-data)))
@@ -36,7 +46,7 @@
         (res/response {:result "OK"}))
 
   (GET "/api/v0.1/category/" []
-       (res/response (conj (get-category) {:id 0 :name "none"})))
+       (res/response (get-category-list)))
 
   (route/not-found "Not Found"))
 
