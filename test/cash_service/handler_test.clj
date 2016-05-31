@@ -30,7 +30,7 @@
   (testing "data get"
     (let [response (app (mock/request :get "/api/v0.1/data/"))]
       (is (= (:status response) 200))
-      (is (= (:body response) (json/generate-string[{:item "test" :money 3000 :category 0}])))))
+      (is (= (:body response) (json/generate-string[{:item "test" :money 3000 :category "none"}])))))
 
   (testing "category"
     (let [response (app (json-request :post "/api/v0.1/category/" {:name "cate1"}))]
@@ -38,7 +38,7 @@
       (is (= (:body response) (json/generate-string {:result "OK"}))))
     (let [response (app (mock/request :get "/api/v0.1/category/"))]
       (is (= (:status response) 200))
-      (is (= (:body response) (json/generate-string [{:id 0 :name "none"} {:id 1 :name "cate1"}]))))
+      (is (= (:body response) (json/generate-string [{0 "none"} {1 "cate1"}]))))
     (let [response (app (json-request :post "/api/v0.1/data/" {:item "test" :money 2000 :category 2}))]
       (is (= (:status response) 200))
       (is (= (:body response) (json/generate-string {:result "Error"}))))
@@ -47,8 +47,8 @@
       (is (= (:body response) (json/generate-string {:result "OK"}))))
     (let [response (app (mock/request :get "/api/v0.1/data/"))]
       (is (= (:status response) 200))
-      (is (= (:body response) (json/generate-string[{:item "test" :money 3000 :category 0}
-                                                    {:item "test" :money 2000 :category 1}])))))
+      (is (= (:body response) (json/generate-string[{:item "test" :money 3000 :category "none"}
+                                                    {:item "test" :money 2000 :category "cate1"}])))))
 
 
   (testing "not-found route"
