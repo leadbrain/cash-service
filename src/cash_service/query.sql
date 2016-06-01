@@ -2,18 +2,20 @@
 CREATE TABLE IF NOT EXISTS data (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
                                  item VARCHAR(255),
                                  money INT,
-                                 category INT)
+                                 category INT,
+                                 create_time INT,
+                                 input_time INT)
 
 --name: create-category-table!
 CREATE TABLE IF NOT EXISTS category (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
                                  name VARCHAR(255))
 
 --name: get-data
-SELECT item, money, category
+SELECT input_time, item, money, category
 FROM data
 
 --name: set-data<!
-INSERT into data (item, money, category) VALUES (:item, :money, :category)
+INSERT into data (item, money, category, input_time) VALUES (:item, :money, :category, :input_time)
 
 --name: get-category
 SELECT id, name
