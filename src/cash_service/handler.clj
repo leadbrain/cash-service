@@ -16,14 +16,14 @@
   (drop-table!)
   (drop-category-table!))
 
-(defn contain-category? [array category]
-  (not-empty (filter #(= category (% :id)) array)))
-
 (defn get-category-val []
-  (conj (map #(apply hash-map (map val %)) (get-category)) {0 "none"}))
+  (conj (get-category) {:id 0 :name "none"}))
 
 (defn get-category-list []
   (conj (get-category) {:id 0 :name "none"}))
+
+(defn contain-category? [id]
+  (not-empty (filter #(= id (% :id)) (get-category-list))))
 
 (defn get-category-name [id]
   ((first (filter #(= id (% :id)) (get-category-list))) :name))
@@ -43,10 +43,10 @@
             (res/redirect (:url (json/parse-string (:body response) true)))))
 
   (POST "/api/v0.1/data/" request
-        (let [category_list (get-category-list) category (get-in request [:body :category])]
-          (if (contain-category? category_list category)
+        (let [id (get-in request [:body :category])]
+          (if (contain-category? id)
             (set-data<! (get-in request [:body])))
-          (if (contain-category? category_list category)
+          (if (contain-category? id)
             (res/response {:result "OK"})
             (res/response {:result "Error"}))))
 
