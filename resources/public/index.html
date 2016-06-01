@@ -4,14 +4,7 @@
     <title>Cash Plan</title>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"/></script>
 		<script src="app.js"></script>
-		<style>
-			.cash_table {width: 403px;border-top:1px solid red;}
-			.cash_table ul {clear: left;margin: 0;padding: 0;list-style-type: none;}
-			/* list-style-type 블릿표시 padding: 0; 들여쓰기*/
-			.cash_table .subject {font-weight: bold;text-align: center;}
-			.cash_table ul li {text-align: center;float: left;margin: 0;border-bottom:1px solid red;border-right:1px solid red;width: 200px;}
-			.cash_table ul .col {border-left:1px solid red;}
-		</style>
+    <link rel="stylesheet" href="index.css"/>
 	</head>
 	<body ng-controller="todoController">
     <p> Cash Plan </p>
@@ -19,6 +12,7 @@
 			<ul class="subject">
 				<li class="col">사용 내역</li>
 				<li>금액</li>
+        <li>카테고리</li>
 			</ul>
 			<ul ng-repeat="data in datas">
 				<li class="col">
@@ -27,11 +21,18 @@
 				<li>
 					{{data.money}}
 				</li>
+        <li>
+					{{data.category}}
+				</li>
 			</ul>
 		</div>
-		<br /><br />
+    <br/>
+    <br/>
 		<input type="text" placeholder ="내용" ng-model="item">
     <input type="text" placeholder ="가격" ng-model="money">
+    <select ng-model="selectedCategory">
+      <option ng-repeat="x in categories" value="{{x.id}}">{{x.name}}</option>
+    </select>
 		<input type="button" value="입력" ng-click="addTodo()">
 	</body>
 </html>

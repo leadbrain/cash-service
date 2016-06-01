@@ -1,0 +1,27 @@
+.cash_table {
+  width: 604px;
+  border-top:1px solid red;
+}
+.cash_table ul {
+  clear: left;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+/* list-style-type 블릿표시 padding: 0; 들여쓰기*/
+.cash_table .subject {
+  font-weight: bold;
+  text-align: center;
+}
+.cash_table ul li {
+  text-align: center;
+  float: left;
+  margin: 0;
+  border-bottom:1px;
+  solid red;
+  border-right:1px solid red;
+  width: 200px;
+}
+.cash_table ul .col {
+  border-left:1px solid red;
+}
