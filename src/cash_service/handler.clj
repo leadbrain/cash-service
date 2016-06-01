@@ -34,6 +34,18 @@
 (defn get-data-list []
   (map convert-id-to-caterory (get-data)))
 
+(defn currentTime []
+  (quot (System/currentTimeMillis) 1000))
+
+(defn validate [data]
+  (if (get-in data [:input_time])
+    (assoc data :create_time (currentTime))
+    (assoc data :input_time (currentTime) :create_time (currentTime))))
+
+
+(defn setData [data]
+  (set-data<! (validate data) ))
+
 (defroutes app-routes
   (GET "/" []
        "Hello")
@@ -45,7 +57,7 @@
   (POST "/api/v0.1/data/" request
         (let [id (get-in request [:body :category])]
           (if (contain-category? id)
-            (set-data<! (get-in request [:body])))
+            (setData (get-in request [:body])))
           (if (contain-category? id)
             (res/response {:result "OK"})
             (res/response {:result "Error"}))))

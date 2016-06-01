@@ -2,7 +2,8 @@
   <head>
     <meta charset="utf-8">
     <title>Cash Plan</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"/></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 		<script src="app.js"></script>
     <link rel="stylesheet" href="index.css"/>
 	</head>
@@ -10,12 +11,16 @@
     <p> Cash Plan </p>
 		<div class="cash_table">
 			<ul class="subject">
-				<li class="col">사용 내역</li>
+        <li class="col">날짜</li>
+        <li>사용 내역</li>
 				<li>금액</li>
         <li>카테고리</li>
 			</ul>
 			<ul ng-repeat="data in datas">
 				<li class="col">
+          {{data.input_time}}
+        </li>
+        <li>
 					{{data.item}}
 				</li>
 				<li>
