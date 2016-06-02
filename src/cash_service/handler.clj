@@ -42,9 +42,18 @@
     (assoc data :create_time (currentTime))
     (assoc data :input_time (currentTime) :create_time (currentTime))))
 
-
 (defn setData [data]
   (set-data<! (validate data) ))
+
+(defn setDefaultCategory [item]
+  (assoc item :category 0))
+
+(defn updateDataArray [array]
+  (doseq [item array] (update-data-category! item)))
+
+(defn deleteCategory [id]
+  (updateDataArray (map #(assoc % :category 0) (get-data-by-category {:category id})))
+  (delete-category! {:id id}))
 
 (defroutes app-routes
   (GET "/" []
@@ -71,6 +80,10 @@
 
   (GET "/api/v0.1/category/" []
        (res/response (get-category-val)))
+
+  (DELETE "/api/v0.1/category/:id/" [id]
+          (deleteCategory id)
+          (res/response {:result "OK"}))
 
   (route/not-found "Not Found"))
 

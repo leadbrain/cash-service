@@ -71,7 +71,26 @@
                                                     {:input_time 1464787040
                                                      :item "test"
                                                      :money 2000
-                                                     :category "cate1"}])))))
+                                                     :category "cate1"}]))))
+
+    (let [response (app (mock/request :delete "/api/v0.1/category/1/"))]
+      (is (= (:status response) 200))
+      (is (= (:body response) (json/generate-string {:result "OK"}))))
+
+    (let [response (app (mock/request :get "/api/v0.1/category/"))]
+      (is (= (:status response) 200))
+      (is (= (:body response) (json/generate-string [{:id 0 :name "none"}]))))
+
+    (let [response (app (mock/request :get "/api/v0.1/data/"))]
+      (is (= (:status response) 200))
+      (is (= (:body response) (json/generate-string[{:input_time 1464787030
+                                                     :item "test"
+                                                     :money 3000
+                                                     :category "none"}
+                                                    {:input_time 1464787040
+                                                     :item "test"
+                                                     :money 2000
+                                                     :category "none"}])))))
 
 
   (testing "not-found route"

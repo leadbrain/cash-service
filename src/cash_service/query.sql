@@ -14,6 +14,16 @@ CREATE TABLE IF NOT EXISTS category (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 SELECT input_time, item, money, category
 FROM data
 
+--name: get-data-by-category
+SELECT id, input_time, item, money, category
+FROM data
+WHERE category=(:category)
+
+--name: update-data-category!
+UPDATE data
+SET category=(:category)
+WHERE id=(:id)
+
 --name: set-data<!
 INSERT into data (item, money, category, input_time) VALUES (:item, :money, :category, :input_time)
 
@@ -23,6 +33,10 @@ FROM category
 
 --name: set-category<!
 INSERT into category (name) VALUES (:name)
+
+--name: delete-category!
+DELETE from category
+WHERE id=(:id)
 
 --name: drop-table!
 DROP TABLE IF EXISTS data
