@@ -41,7 +41,7 @@
   (testing "category"
     (let [response (app (json-request :post "/api/v0.1/category/" {:name "cate1"}))]
       (is (= (:status response) 200))
-      (is (= (:body response) (json/generate-string {:result "OK"}))))
+      (is (= (:body response) (json/generate-string {:result "OK" :id 1}))))
 
     (let [response (app (mock/request :get "/api/v0.1/category/"))]
       (is (= (:status response) 200))

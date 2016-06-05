@@ -75,8 +75,7 @@
        (res/response (get-data-list)))
 
   (POST "/api/v0.1/category/" request
-        (set-category<! (get-in request [:body]))
-        (res/response {:result "OK"}))
+        (res/response {:result "OK" :id (-> (get-in request [:body]) set-category<! first val)}))
 
   (GET "/api/v0.1/category/" []
        (res/response (get-category-val)))
