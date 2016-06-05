@@ -23,7 +23,7 @@ function todoController($scope, $http) {
     $scope.datas.push(data);
   };
 
-  $scope.addTodo = function() {
+  $scope.addData = function() {
     if (($scope.item && $scope.money) && isNaN($scope.money) == false) {
       var data = {"input_time":moment().unix(),
                   "item" : $scope.item,
@@ -36,5 +36,32 @@ function todoController($scope, $http) {
     }	else {
       alert('올바른 값을 입력해주세요!');
     }
+  };
+
+  $scope.updateCategory = function(category) {
+      $scope.categories.push(category);
+      $scope.newCategory = null;
+  }
+
+  $scope.addCategory = function() {
+    $http.post('api/v0.1/category/',{"name" : $scope.newCategory})
+    .success(function(result) {
+      var category = {"id" : result.id,
+                      "name" : $scope.newCategory };
+      $scope.updateCategory(category);
+    });
+  };
+
+  $scope.deleteCategory = function() {
+    $http.delete('api/v0.1/category/' + $scope.toDeleteCategory + '/');
+    var index;
+    for (index in $scope.categories) {
+      if ($scope.categories[index].id === Number($scope.toDeleteCategory)) {
+        break;
+      }
+    }
+    delete $scope.categories[index];
+    $scope.toDeleteCategory = null;
+    console.log($scope.options);
   };
 }
