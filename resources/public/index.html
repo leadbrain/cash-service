@@ -9,6 +9,19 @@
 	</head>
 	<body ng-controller="todoController">
     <p> Cash Plan </p>
+    <input type="text" placeholder ="내용" ng-model="item">
+    <input type="text" placeholder ="가격" ng-model="money">
+    <select ng-model="selectedCategory">
+      <option ng-repeat="x in categories" value="{{x.id}}">{{x.name}}</option>
+    </select>
+		<input type="button" value="입력" ng-click="addData()">
+    <br/>
+    <input type="text" placeholder ="카테고리" ng-model="newCategory">
+    <input type="button" value="추가" ng-click="addCategory()">
+    <select ng-model="toDeleteCategory">
+      <option ng-repeat="x in categories" value="{{x.id}}">{{x.name}}</option>
+    </select>
+    <input type="button" value="삭제" ng-click="deleteCategory()">
 		<div class="cash_table">
 			<ul class="subject">
         <li class="col">날짜</li>
@@ -31,13 +44,5 @@
 				</li>
 			</ul>
 		</div>
-    <br/>
-    <br/>
-		<input type="text" placeholder ="내용" ng-model="item">
-    <input type="text" placeholder ="가격" ng-model="money">
-    <select ng-model="selectedCategory">
-      <option ng-repeat="x in categories" value="{{x.id}}">{{x.name}}</option>
-    </select>
-		<input type="button" value="입력" ng-click="addTodo()">
 	</body>
 </html>
