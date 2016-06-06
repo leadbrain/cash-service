@@ -7,15 +7,18 @@
             [cheshire.core :as json]
             [cash-service.data :as data]
             [cash-service.category :as category]
+            [cash-service.balance :as balance]
             [clj-http.client :as http]))
 
 (defn init []
   (data/init)
-  (category/init))
+  (category/init)
+  (balance/init))
 
 (defn destroy []
   (data/destroy)
-  (category/destroy))
+  (category/destroy)
+  (balance/destroy))
 
 (defn convertIdToCaterory [item]
   (assoc item :category (category/getName (item :category))))
@@ -30,18 +33,22 @@
   (data/updateByArray (map #(assoc % :category 0) (data/getByCategory id)))
   (category/delete id))
 
+(defn setData [item]
+  (data/setItem item)
+  (balance/setItem (item :money)))
+
 (defroutes app-routes
   (GET "/" []
        "Hello")
 
   (GET "/bob" []
        (let [response (http/get "https://www.infraware.net/ajax/boards/GetRestaurantmenuImage")]
-            (res/redirect (:url (json/parse-string (:body response) true)))))
+            (res/redirect (:url (json/parse-string (response :body) true)))))
 
   (POST "/api/v0.1/data/" request
         (let [id (get-in request [:body :category])]
           (if (category/contain? id)
-            (data/setItem (get-in request [:body])))
+            (setData (request :body)))
           (if (category/contain? id)
             (res/response {:result "OK"})
             (res/response {:result "Error"}))))
@@ -50,7 +57,7 @@
        (res/response (getDataList)))
 
   (POST "/api/v0.1/category/" request
-        (res/response {:result "OK" :id (-> (get-in request [:body]) category/setItem first val)}))
+        (res/response {:result "OK" :id (-> (request :body) category/setItem first val)}))
 
   (GET "/api/v0.1/category/" []
        (res/response (category/getList)))
@@ -58,6 +65,9 @@
   (DELETE "/api/v0.1/category/:id/" [id]
           (deleteCategory id)
           (res/response {:result "OK"}))
+
+  (GET "/api/v0.1/balance/" []
+       (res/response {:money ((balance/getItem) :money)}))
 
   (route/not-found "Not Found"))
 

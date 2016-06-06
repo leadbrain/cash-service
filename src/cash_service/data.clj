@@ -5,7 +5,7 @@
   (create-data-table!))
 
 (defn destroy []
-  (drop-table!))
+  (drop-data-table!))
 
 (defn currentTime []
   (quot (System/currentTimeMillis) 1000))
