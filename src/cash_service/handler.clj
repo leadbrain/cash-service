@@ -5,55 +5,30 @@
             [ring.middleware.json :as ring-json]
             [ring.util.response :as res]
             [cheshire.core :as json]
-            [cash-service.db-handler :refer :all]
+            [cash-service.data :as data]
+            [cash-service.category :as category]
             [clj-http.client :as http]))
 
 (defn init []
-  (create-data-table!)
-  (create-category-table!))
+  (data/init)
+  (category/init))
 
 (defn destroy []
-  (drop-table!)
-  (drop-category-table!))
+  (data/destroy)
+  (category/destroy))
 
-(defn get-category-val []
-  (conj (get-category) {:id 0 :name "none"}))
+(defn convertIdToCaterory [item]
+  (assoc item :category (category/getName (item :category))))
 
-(defn get-category-list []
-  (conj (get-category) {:id 0 :name "none"}))
-
-(defn contain-category? [id]
-  (not-empty (filter #(= id (% :id)) (get-category-list))))
-
-(defn get-category-name [id]
-  ((first (filter #(= id (% :id)) (get-category-list))) :name))
-
-(defn convert-id-to-caterory [item]
-  (assoc item :category (get-category-name (item :category))))
-
-(defn get-data-list []
-  (map convert-id-to-caterory (get-data)))
-
-(defn currentTime []
-  (quot (System/currentTimeMillis) 1000))
-
-(defn validate [data]
-  (if (get-in data [:input_time])
-    (assoc data :create_time (currentTime))
-    (assoc data :input_time (currentTime) :create_time (currentTime))))
-
-(defn setData [data]
-  (set-data<! (validate data) ))
+(defn getDataList[]
+  (map convertIdToCaterory (data/getList)))
 
 (defn setDefaultCategory [item]
   (assoc item :category 0))
 
-(defn updateDataArray [array]
-  (doseq [item array] (update-data-category! item)))
-
 (defn deleteCategory [id]
-  (updateDataArray (map #(assoc % :category 0) (get-data-by-category {:category id})))
-  (delete-category! {:id id}))
+  (data/updateByArray (map #(assoc % :category 0) (data/getByCategory id)))
+  (category/delete id))
 
 (defroutes app-routes
   (GET "/" []
@@ -65,20 +40,20 @@
 
   (POST "/api/v0.1/data/" request
         (let [id (get-in request [:body :category])]
-          (if (contain-category? id)
-            (setData (get-in request [:body])))
-          (if (contain-category? id)
+          (if (category/contain? id)
+            (data/setItem (get-in request [:body])))
+          (if (category/contain? id)
             (res/response {:result "OK"})
             (res/response {:result "Error"}))))
 
   (GET "/api/v0.1/data/" []
-       (res/response (get-data-list)))
+       (res/response (getDataList)))
 
   (POST "/api/v0.1/category/" request
-        (res/response {:result "OK" :id (-> (get-in request [:body]) set-category<! first val)}))
+        (res/response {:result "OK" :id (-> (get-in request [:body]) category/setItem first val)}))
 
   (GET "/api/v0.1/category/" []
-       (res/response (get-category-val)))
+       (res/response (category/getList)))
 
   (DELETE "/api/v0.1/category/:id/" [id]
           (deleteCategory id)
