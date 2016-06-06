@@ -8,13 +8,15 @@
   (drop-category-table!))
 
 (defn getList []
-  (conj (get-category) {:id 0 :name "none"}))
+  (conj (get-category) {:id 0 :name "none" :type "in"}))
 
 (defn contain? [id]
   (not-empty (filter #(= id (% :id)) (getList))))
 
-(defn getName [id]
-  ((first (filter #(= id (% :id)) (getList))) :name))
+(defn getItem [id]
+  (if (= id 0)
+    {:name "none" :type "in"}
+    (first (get-category-by-id {:id id}))))
 
 (defn delete [id]
   (delete-category! {:id id}))

@@ -11,6 +11,13 @@
 (defn getItem []
   (first (get-balance)))
 
-(defn setItem [money]
-  (let [id ((getItem) :id) balance (+ money ((getItem) :money))]
+(defn increaseMoney [money]
+  (let [id ((getItem) :id)
+        balance (+ ((getItem) :money) money)]
     (update-balance! {:id id :money balance})))
+
+(defn decreaseMoney [money]
+  (let [id ((getItem) :id)
+        balance (- ((getItem) :money) money)]
+    (update-balance! {:id id :money balance})))
+

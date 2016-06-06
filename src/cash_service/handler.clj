@@ -21,7 +21,7 @@
   (balance/destroy))
 
 (defn convertIdToCaterory [item]
-  (assoc item :category (category/getName (item :category))))
+  (assoc item :category ((category/getItem (item :category)) :name )))
 
 (defn getDataList[]
   (map convertIdToCaterory (data/getList)))
@@ -35,7 +35,11 @@
 
 (defn setData [item]
   (data/setItem item)
-  (balance/setItem (item :money)))
+  (case ((category/getItem (item :category)) :type)
+    "in" (balance/increaseMoney (item :money))
+    "out" (balance/decreaseMoney (item :money))
+    "default" (print (item :type))))
+
 
 (defroutes app-routes
   (GET "/" []

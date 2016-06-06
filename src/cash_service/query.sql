@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS data (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 
 --name: create-category-table!
 CREATE TABLE IF NOT EXISTS category (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-                                     name VARCHAR(255))
+                                     name VARCHAR(255),
+                                     type VARCHAR(255))
 
 --name: create-balance-table!
 CREATE TABLE IF NOT EXISTS balance(id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -33,12 +34,17 @@ INSERT into data (item, money, category, input_time)
 VALUES (:item, :money, :category, :input_time)
 
 --name: get-category
-SELECT id, name
+SELECT id, name, type
 FROM category
 
+--name: get-category-by-id
+SELECT name, type
+FROM category
+WHERE id=(:id)
+
 --name: set-category<!
-INSERT into category (name)
-VALUES (:name)
+INSERT into category (name, type)
+VALUES (:name, :type)
 
 --name: delete-category!
 DELETE from category
