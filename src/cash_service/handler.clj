@@ -27,10 +27,12 @@
   (map convertIdToCaterory (data/getList)))
 
 (defn setDefaultCategory [item]
-  (assoc item :category 0))
+  (assoc item :category 1))
 
 (defn deleteCategory [id]
-  (data/updateByArray (map #(assoc % :category 0) (data/getByCategory id)))
+  (data/updateByArray (map setDefaultCategory (data/getByCategory id)))
+  (if (= ((category/getItem id) :type) "out")
+    (balance/increaseMoney (* ((category/getItem id) :money) 2)))
   (category/delete id))
 
 (defn setData [item]
@@ -38,7 +40,8 @@
   (case ((category/getItem (item :category)) :type)
     "in" (balance/increaseMoney (item :money))
     "out" (balance/decreaseMoney (item :money))
-    "default" (print (item :type))))
+    "default" (print (item :type)))
+  (category/increaseMoney (item :category) (item :money)))
 
 
 (defroutes app-routes
