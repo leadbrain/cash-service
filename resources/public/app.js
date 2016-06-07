@@ -44,7 +44,9 @@ function todoController($scope, $http) {
   }
 
   $scope.addCategory = function() {
-    $http.post('api/v0.1/category/',{"name" : $scope.newCategory})
+    $http.post('api/v0.1/category/',{"name" : $scope.newCategory,
+                                     "money" : 0,
+                                     "type" : "in"})
     .success(function(result) {
       var category = {"id" : result.id,
                       "name" : $scope.newCategory };
