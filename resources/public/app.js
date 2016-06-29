@@ -1,4 +1,4 @@
-function todoController($scope, $http) {
+angular.module('cashApp', ['ui.bootstrap']).controller('cashController', function ($scope, $http) {
   $http.get('api/v0.1/category/').success(function(category_list) {
     $scope.categories = category_list;
   });
@@ -27,9 +27,9 @@ function todoController($scope, $http) {
     if (($scope.item && $scope.money) && isNaN($scope.money) == false) {
       var data = {"input_time":moment().unix(),
                   "item" : $scope.item,
-                  "money" : $scope.money,
-                  "category" : Number($scope.selectedCategory)};
-      $http.post('api/v0.1/data/', data);
+                  "money" : Number($scope.money),
+                  "category" : Number($scope.selectedCategory.id)};
+      $http.post('api/v0.1/data/', JSON.stringify(data));
       $scope.updateData(data);
       $scope.item = null;
       $scope.money = null;
@@ -55,10 +55,10 @@ function todoController($scope, $http) {
   };
 
   $scope.deleteCategory = function() {
-    $http.delete('api/v0.1/category/' + $scope.toDeleteCategory + '/');
+    $http.delete('api/v0.1/category/' + $scope.toDeleteCategory.id + '/');
     var index;
     for (index in $scope.categories) {
-      if ($scope.categories[index].id === Number($scope.toDeleteCategory)) {
+      if ($scope.categories[index].id === Number($scope.toDeleteCategory.id)) {
         break;
       }
     }
@@ -66,4 +66,15 @@ function todoController($scope, $http) {
     $scope.toDeleteCategory = null;
     console.log($scope.options);
   };
-}
+
+  var _selected;
+  $scope.selected = undefined;
+
+  $scope.ngModelOptionsSelected = function(value) {
+    if (arguments.length) {
+      _selected = value;
+    } else {
+      return _selected;
+    }
+  };
+});
