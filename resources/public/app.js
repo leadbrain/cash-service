@@ -27,9 +27,9 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
     if (($scope.item && $scope.money) && isNaN($scope.money) == false) {
       var data = {"input_time":moment().unix(),
                   "item" : $scope.item,
-                  "money" : $scope.money,
+                  "money" : Number($scope.money),
                   "category" : Number($scope.selectedCategory.id)};
-      $http.post('api/v0.1/data/', data);
+      $http.post('api/v0.1/data/', JSON.stringify(data));
       $scope.updateData(data);
       $scope.item = null;
       $scope.money = null;
