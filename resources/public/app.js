@@ -1,4 +1,4 @@
-function todoController($scope, $http) {
+angular.module('cashApp', []).controller('cashController', function ($scope, $http) {
   $http.get('api/v0.1/category/').success(function(category_list) {
     $scope.categories = category_list;
   });
@@ -66,4 +66,4 @@ function todoController($scope, $http) {
     $scope.toDeleteCategory = null;
     console.log($scope.options);
   };
-}
+});
