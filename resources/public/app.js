@@ -1,4 +1,4 @@
-angular.module('cashApp', []).controller('cashController', function ($scope, $http) {
+angular.module('cashApp', ['ui.bootstrap']).controller('cashController', function ($scope, $http) {
   $http.get('api/v0.1/category/').success(function(category_list) {
     $scope.categories = category_list;
   });
@@ -28,7 +28,7 @@ angular.module('cashApp', []).controller('cashController', function ($scope, $ht
       var data = {"input_time":moment().unix(),
                   "item" : $scope.item,
                   "money" : $scope.money,
-                  "category" : Number($scope.selectedCategory)};
+                  "category" : Number($scope.selectedCategory.id)};
       $http.post('api/v0.1/data/', data);
       $scope.updateData(data);
       $scope.item = null;
@@ -55,15 +55,26 @@ angular.module('cashApp', []).controller('cashController', function ($scope, $ht
   };
 
   $scope.deleteCategory = function() {
-    $http.delete('api/v0.1/category/' + $scope.toDeleteCategory + '/');
+    $http.delete('api/v0.1/category/' + $scope.toDeleteCategory.id + '/');
     var index;
     for (index in $scope.categories) {
-      if ($scope.categories[index].id === Number($scope.toDeleteCategory)) {
+      if ($scope.categories[index].id === Number($scope.toDeleteCategory.id)) {
         break;
       }
     }
     delete $scope.categories[index];
     $scope.toDeleteCategory = null;
     console.log($scope.options);
+  };
+
+  var _selected;
+  $scope.selected = undefined;
+
+  $scope.ngModelOptionsSelected = function(value) {
+    if (arguments.length) {
+      _selected = value;
+    } else {
+      return _selected;
+    }
   };
 });

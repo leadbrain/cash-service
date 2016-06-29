@@ -4,25 +4,53 @@
     <title>Cash Plan</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.3/ui-bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.3/ui-bootstrap-tpls.js"></script>
 		<script src="app.js"></script>
     <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
 	</head>
 	<body ng-controller="cashController">
     <p> Cash Plan </p>
-    <input type="text" placeholder ="내용" ng-model="item">
-    <input type="text" placeholder ="가격" ng-model="money">
-    <select ng-model="selectedCategory">
-      <option ng-repeat="x in categories" value="{{x.id}}">{{x.name}}</option>
-    </select>
-		<input type="button" value="입력" ng-click="addData()">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3">
+          <input type="text" placeholder ="내용" ng-model="item" class="form-control">
+        </div>
+        <div class="col-sm-3">
+          <input type="text" placeholder ="가격" ng-model="money" class="form-control">
+        </div>
+        <div class="col-sm-3">
+          <input type="text" ng-model="selectedCategory" placeholder="카테고리 선택" uib-typeahead="x as x.name  for x in categories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+        </div>
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-primary" ng-click="addData()">
+            입력
+          </button>
+        </div>
+      </div>
+      <br/>
+      <div class="row">
+        <div class="col-sm-3">
+          <input type="text" placeholder ="카테고리" ng-model="newCategory" class="form-control">
+        </div>
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-primary" ng-click="addCategory()">
+            추가
+          </button>
+        </div>
+        <div class="col-sm-3">
+          <input type="text" ng-model="toDeleteCategory" placeholder="삭제할 카테고리" uib-typeahead="x as x.name  for x in categories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+        </div>
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-primary" ng-click="deleteCategory()">
+            삭제
+          </button>
+        </div>
+      </div>
+    </div>
     <br/>
-    <input type="text" placeholder ="카테고리" ng-model="newCategory">
-    <input type="button" value="추가" ng-click="addCategory()">
-    <select ng-model="toDeleteCategory">
-      <option ng-repeat="x in categories" value="{{x.id}}">{{x.name}}</option>
-    </select>
-    <input type="button" value="삭제" ng-click="deleteCategory()">
-		<div class="cash_table">
+    <div class="cash_table">
 			<ul class="subject">
         <li class="col">날짜</li>
         <li>사용 내역</li>
