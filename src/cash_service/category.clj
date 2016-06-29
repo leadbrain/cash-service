@@ -1,10 +1,6 @@
 (ns cash-service.category
   (:require [cash-service.db-handler :refer :all]))
 
-(defn init []
-  (create-category-table!)
-  (set-category<! {:name "none" :type "in" :money 0}))
-
 (defn destroy []
   (drop-category-table!))
 
@@ -13,6 +9,11 @@
 
 (defn contain? [id]
   (not-empty (filter #(= id (% :id)) (getList))))
+
+(defn init []
+  (create-category-table!)
+  (if-not (contain? 1)
+    (set-category<! {:name "none" :type "in" :money 0})))
 
 (defn getItem [id]
     (first (get-category-by-id {:id id})))
