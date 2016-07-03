@@ -8,7 +8,8 @@
             [cash-service.data :as data]
             [cash-service.category :as category]
             [cash-service.balance :as balance]
-            [clj-http.client :as http]))
+            [clj-http.client :as http]
+            [cash-service.auth :as auth]))
 
 (defn init []
   (data/init)
@@ -46,7 +47,7 @@
 
 (defroutes app-routes
   (GET "/" []
-       "Hello")
+       (res/redirect "/login"))
 
   (GET "/bob" []
        (let [response (http/get "https://www.infraware.net/ajax/boards/GetRestaurantmenuImage")]
@@ -74,12 +75,13 @@
           (res/response {:result "OK"}))
 
   (GET "/api/v0.1/balance/" []
-       (res/response {:money ((balance/getItem) :money)}))
-
-  (route/not-found "Not Found"))
+       (res/response {:money ((balance/getItem) :money)})))
 
 (def app
-  (-> app-routes
-      (ring-json/wrap-json-body {:keywords? true})
-      (ring-json/wrap-json-response)
-      (wrap-defaults (assoc site-defaults :security {:anti-forgery false}))))
+  (routes
+    (-> app-routes
+        (ring-json/wrap-json-body {:keywords? true})
+        (ring-json/wrap-json-response)
+        (wrap-defaults (assoc site-defaults :security {:anti-forgery false})))
+    (-> auth/auth-routes)
+    (route/not-found "Not Found")))

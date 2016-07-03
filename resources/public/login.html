@@ -2,10 +2,12 @@
 <html >
   <head>
     <meta charset="UTF-8">
-    <title>Login/Sign-Up Form</title>
+    <title>Cash Service Login/SignUp</title>
     <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="../css/normalize.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <!-- <script src="css/normalize.css"></script> -->
+    <!-- <script src="css/style.css"></script> -->
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/style.css">
   </head>
 
   <body>
@@ -19,20 +21,20 @@
         <div id="login">
           <h1>Welcome to the cash service!</h1>
 
-          <form action="/" method="post">
+          <form enctype="application/json" action="/login" method="post">
 
             <div class="field-wrap">
             <label>
               Your ID<span class="req">*</span>
             </label>
-            <input type="id"required autocomplete="off"/>
+            <input type="id"required autocomplete="off" name="userid"/>
           </div>
 
           <div class="field-wrap">
             <label>
               Password<span class="req">*</span>
             </label>
-            <input type="password"required autocomplete="off"/>
+            <input type="password"required autocomplete="off" name="password"/>
           </div>
 
           <p class="forgot"><a href="#">Forgot Password?</a></p>
@@ -44,43 +46,27 @@
 
         <div id="signup">
           <h1>Sign up for free</h1>
-          <form action="/" method="post">
-<!--
-          <div class="top-row">
-            <div class="field-wrap">
-              <label>
-                First Name<span class="req">*</span>
-              </label>
-              <input type="text" required autocomplete="off" />
-            </div>
+          <form enctype="application/json" action="/sign-up" method="post">
 
-            <div class="field-wrap">
-              <label>
-                Last Name<span class="req">*</span>
-              </label>
-              <input type="text"required autocomplete="off"/>
-            </div>
-          </div>
--->
           <div class="field-wrap">
             <label>
               Your ID<span class="req">*</span>
             </label>
-            <input type="id"required autocomplete="off"/>
+            <input type="id"required autocomplete="off" name="userid"/>
           </div>
 
           <div class="field-wrap">
             <label>
               Password<span class="req">*</span>
             </label>
-            <input type="password"required autocomplete="off"/>
+            <input type="password"required autocomplete="off" name="password"/>
           </div>
 
           <div class="field-wrap">
             <label>
               Confirm Password<span class="req">*</span>
             </label>
-            <input type="password"required autocomplete="off"/>
+            <input type="password"required autocomplete="off" name="repassword"/>
           </div>
 
           <button type="submit" class="button button-block"/>Get Started</button>
@@ -92,6 +78,6 @@
 
 </div> <!-- /form -->
     <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-    <script src="../js/index.js"></script>
+    <script src="/js/index.js"></script>
   </body>
 </html>
