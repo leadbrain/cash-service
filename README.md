@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/cashplan/cash-service.svg?branch=master)](https://travis-ci.org/cashplan/cash-service)
 # cash-service
 
 leadbrain
