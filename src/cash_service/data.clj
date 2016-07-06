@@ -1,5 +1,5 @@
-(ns cash-service.data
-  (:require [cash-service.db-handler :refer :all]))
+(ns cash_service.data
+  (:require [cash_service.db-handler :refer :all]))
 
 (defn init []
   (create-data-table!))

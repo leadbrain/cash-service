@@ -12,8 +12,8 @@
                  [com.h2database/h2 "1.4.191"]
                  [clj-http "3.0.1"]]
   :plugins [[lein-ring "0.9.7"]]
-  :ring {:init cash-service.handler/init
-         :handler cash-service.handler/app}
+  :ring {:init cash_service.handler/init
+         :handler cash_service.handler/api-and-app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]]}})

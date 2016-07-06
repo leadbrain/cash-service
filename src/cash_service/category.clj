@@ -1,5 +1,5 @@
-(ns cash-service.category
-  (:require [cash-service.db-handler :refer :all]))
+(ns cash_service.category
+  (:require [cash_service.db-handler :refer :all]))
 
 (defn destroy []
   (drop-category-table!))

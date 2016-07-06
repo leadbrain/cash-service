@@ -1,5 +1,5 @@
-(ns cash-service.balance
-  (:require [cash-service.db-handler :refer :all]))
+(ns cash_service.balance
+  (:require [cash_service.db-handler :refer :all]))
 
 (defn init []
   (create-balance-table!)
@@ -20,4 +20,3 @@
   (let [id ((getItem) :id)
         balance (- ((getItem) :money) money)]
     (update-balance! {:id id :money balance})))
-
