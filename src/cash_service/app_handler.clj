@@ -4,7 +4,7 @@
 ;;
 ;; Copyright 2016, YW. Jang, All rights reserved.
 
-(ns cash_service.app_handler
+(ns cash-service.app-handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.util.response :as res]

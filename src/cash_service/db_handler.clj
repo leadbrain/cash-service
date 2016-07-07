@@ -1,4 +1,4 @@
-(ns cash_service.db-handler
+(ns cash-service.db-handler
   (:require [yesql.core :refer [defqueries]]
             [clojure.core.async :refer [<!]]))
 

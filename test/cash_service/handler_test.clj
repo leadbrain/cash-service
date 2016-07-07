@@ -1,9 +1,9 @@
-(ns cash_service.handler-test
+(ns cash-service.handler-test
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
-            [cash_service.handler :refer :all]
-            [cash_service.balance :as balance]
-            [cash_service.category :as category]
+            [cash-service.handler :refer :all]
+            [cash-service.balance :as balance]
+            [cash-service.category :as category]
             [cheshire.core :as json]
             [ring.util.anti-forgery :as anti]))
 

@@ -1,14 +1,14 @@
-(ns cash_service.handler
+(ns cash-service.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :as ring-json]
             [cheshire.core :as json]
-            [cash_service.data :as data]
-            [cash_service.category :as category]
-            [cash_service.balance :as balance]
-            [cash_service.api_handler :refer [api-routes]]
-            [cash_service.app_handler :refer [app-routes]]))
+            [cash-service.data :as data]
+            [cash-service.category :as category]
+            [cash-service.balance :as balance]
+            [cash-service.api-handler :refer [api-routes]]
+            [cash-service.app-handler :refer [app-routes]]))
 
 (defn init []
   (data/init)
