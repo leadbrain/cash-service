@@ -20,4 +20,3 @@
   (let [id ((getItem) :id)
         balance (- ((getItem) :money) money)]
     (update-balance! {:id id :money balance})))
-

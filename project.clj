@@ -13,7 +13,7 @@
                  [clj-http "3.0.1"]]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:init cash-service.handler/init
-         :handler cash-service.handler/app}
+         :handler cash-service.handler/api-and-app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]]}})
