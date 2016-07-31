@@ -7,18 +7,21 @@
             [cash-service.data :as data]
             [cash-service.category :as category]
             [cash-service.balance :as balance]
+            [cash-service.account :as account]
             [cash-service.api-handler :refer [api-routes]]
             [cash-service.app-handler :refer [app-routes]]))
 
 (defn init []
   (data/init)
   (category/init)
-  (balance/init))
+  (balance/init)
+  (account/init))
 
 (defn destroy []
   (data/destroy)
   (category/destroy)
-  (balance/destroy))
+  (balance/destroy)
+  (account/destroy))
 
 (def api-and-app
   (routes

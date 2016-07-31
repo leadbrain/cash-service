@@ -32,19 +32,28 @@
       (is (= (:status response) 200))))
       ;(is (= (:body response) "Hello"))))
 
-  (testing "data post"
+  (testing "data insert"
+    (let [response (api-and-app (json-request :post "/api/v0.1/account/" {:name "test", :balance 0}))]
+      (is (check response {:result "OK"
+                        :id 1})))
     (let [response (makeSetDataResponse {:input_time 1464787030
-                             :item "test"
-                             :money 3000
-                             :category 1})]
-      (check response {:result "OK"})))
-
-  (testing "data get"
+                                         :item "test"
+                                         :money 3000
+                                         :category 1
+                                         :account 1})]
+      (is (check response {:result "OK"})))
     (let [response (api-and-app (mock/request :get "/api/v0.1/data/"))]
-      (check response [{:input_time 1464787030
+      (is (check response [{:input_time 1464787030
                         :item "test"
                         :money 3000
-                        :category "none"}])))
+                        :category 1
+                        :account 1}])))
+    (let [response (api-and-app (mock/request :get "/api/v0.1/account/1/"))]
+      (is (check response {:result "OK"
+                       :name "test"
+                       :balance 3000})))
+    (let [response (api-and-app (mock/request :get "/api/v0.1/balance/"))]
+      (is (check response {:money 3000}))))
 
   (testing "not-found route"
     (let [response (api-and-app (mock/request :get "/invalid"))]
@@ -60,34 +69,41 @@
 
 (deftest test-balance-api
   (testing "balance"
+    (let [response (api-and-app (json-request :post "/api/v0.1/account/" {:name "test", :balance 0}))]
+      (is (check response {:result "OK"
+                           :id 1})))
+
     (let [response (api-and-app (mock/request :get "/api/v0.1/balance/"))]
-      (check response {:money 0}))
+      (is (check response {:money 0})))
 
     (makeSetDataResponse {:input_time 1464787030
-                        :item "test"
-                        :money 3000
-                        :category 1})
+                          :item "test"
+                          :money 3000
+                          :category 1
+                          :account 1})
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/balance/"))]
-      (check response {:money 3000}))
+      (is (check response {:money 3000})))
 
     (makeSetDataResponse {:input_time 1464787040
-                        :item "test"
-                        :money 2000
-                        :category 1})
+                          :item "test"
+                          :money 2000
+                          :category 1
+                          :account 1})
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/balance/"))]
-      (check response {:money 5000}))
+      (is (check response {:money 5000})))
 
     (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate1" :type :out :money 0}))
 
     (makeSetDataResponse {:input_time 1464787040
-                        :item "test"
-                        :money 2000
-                        :category 2})
+                          :item "test"
+                          :money 2000
+                          :category 2
+                          :account 1})
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/balance/"))]
-      (check response {:money 3000}))))
+      (is (check response {:money 3000})))))
 
 
 
@@ -95,50 +111,92 @@
 (deftest test-category
   (testing "add"
     (let [response (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate1" :type "out" :money 0}))]
-      (check response {:result "OK" :id 2}))
+      (is (check response {:result "OK" :id 2})))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/category/"))]
-      (check response [{:id 1 :name "none" :type "in" :money 0}
+      (is (check response [{:id 1 :name "none" :type "in" :money 0}
                        {:id 2 :name "cate1" :type "out" :money 0}])))
+    (let [response (api-and-app (json-request :post "/api/v0.1/account/" {:name "test", :balance 0}))]
+      (is (check response {:result "OK"
+                        :id 1}))))
 
   (testing "error input"
     (let [response (makeSetDataResponse {:input_time 1464787030
                                          :item "test"
                                          :money 2000
-                                         :category 0})]
-      (check response {:result "Error"})))
+                                         :category 0
+                                         :account 1})]
+      (is (check response {:result "Error"}))))
 
   (testing "input and update"
     (let [response (makeSetDataResponse {:input_time 1464787040
                                          :item "test"
                                          :money 2000
-                                         :category 2})]
-      (check response {:result "OK"}))
+                                         :category 2
+                                         :account 1})]
+      (is (check response {:result "OK"})))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/data/"))]
-      (check response [{:input_time 1464787040
-                        :item "test"
-                        :money 2000
-                        :category "cate1"}]))
+      (is (check response [{:input_time 1464787040
+                            :item "test"
+                            :money 2000
+                            :category 2
+                            :account 1}])))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/balance/"))]
-      (check response {:money -2000}))
+      (is (check response {:money -2000})))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/category/"))]
-      (check response [{:id 1 :name "none" :type "in" :money 0}
-                       {:id 2 :name "cate1" :type "out" :money 2000}]))
+      (is (check response [{:id 1 :name "none" :type "in" :money 0}
+                       {:id 2 :name "cate1" :type "out" :money 2000}])))
 
     (let [response (api-and-app (mock/request :delete "/api/v0.1/category/2/"))]
-      (check response {:result "OK"}))
+      (is (check response {:result "OK"})))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/category/"))]
-      (check response [{:id 1 :name "none" :type "in" :money 2000}]))
+      (is (check response [{:id 1 :name "none" :type "in" :money 2000}])))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/balance/"))]
-      (check response {:money 2000}))
+      (is (check response {:money 2000})))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/data/"))]
-      (check response [{:input_time 1464787040
-                        :item "test"
-                        :money 2000
-                        :category "none"}]))))
+      (is (check response [{:input_time 1464787040
+                            :item "test"
+                            :money 2000
+                            :category 1
+                            :account 1}])))))
+
+(deftest test-account
+  (testing "delete account"
+    (let [response (api-and-app (json-request :post "/api/v0.1/account/" {:name "account1",
+                                                                          :balance 0}))]
+      (is (check response {:result "OK"
+                           :id 1})))
+
+    (let [response (api-and-app (json-request :post "/api/v0.1/account/" {:name "account2",
+                                                                          :balance 0}))]
+      (is (check response {:result "OK"
+                           :id 2})))
+
+    (let [response (makeSetDataResponse {:input_time 1464787040
+                                         :item "test"
+                                         :money 2000
+                                         :category 1
+                                         :account 1})]
+      (is (check response {:result "OK"})))
+
+    (let [response (api-and-app (mock/request :delete "/api/v0.1/account/1/"))]
+      (is (check response {:result "Error"})))
+
+    (let [response (api-and-app (json-request :put "/api/v0.1/account/1/" {:id 2}))]
+      (is (check response {:result "OK"})))
+
+        (let [response (api-and-app (mock/request :get "/api/v0.1/data/"))]
+      (is (check response [{:input_time 1464787040
+                            :item "test"
+                            :money 2000
+                            :category 1
+                            :account 2}])))
+
+    (let [response (api-and-app (mock/request :delete "/api/v0.1/account/1/"))]
+      (is (check response {:result "OK"})))))

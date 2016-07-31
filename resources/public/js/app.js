@@ -7,10 +7,21 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
     $scope.balance = balance.money;
   });
 
+  $http.post('api/v0.1/account/', {"name" : "test",
+                                   "balance" : 0});
+
+
+
   $http.get('api/v0.1/data/').success(function(data_list) {
     $scope.datas = [];
     for (key in data_list) {
       var data = data_list[key];
+      for (key in $scope.categories) {
+        if ($scope.categories[key].id === data["category"]) {
+          data["category"] = $scope.categories[key].name;
+          break;
+        }
+      }
       data.input_time = moment.unix(data.input_time).format("YYYY. M. D hh:mm:ss");
       $scope.datas.push(data);
     }
@@ -32,7 +43,8 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
       var data = {"input_time":moment().unix(),
                   "item" : $scope.item,
                   "money" : Number($scope.money),
-                  "category" : Number($scope.selectedCategory.id)};
+                  "category" : Number($scope.selectedCategory.id),
+                  "account" : Number(1)};
       $http.post('api/v0.1/data/', JSON.stringify(data));
       $scope.updateData(data);
       $scope.item = null;

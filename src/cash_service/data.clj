@@ -26,3 +26,9 @@
 
 (defn getByCategory [id]
   (get-data-by-category {:category id}))
+
+(defn updateAccount [from to]
+  (update-account! {:from from :to to}))
+
+(defn anyAccount? [id]
+  (not-empty (get-data-by-account {:account id})))
