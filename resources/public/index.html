@@ -50,18 +50,31 @@
       </div>
       <br/>
 
-        <div class="row" style="background-color:silver">
-          <div class="col-xs-3">날짜</div>
-          <div class="col-xs-3">사용 내역</div>
-          <div class="col-xs-3">금액</div>
-          <div class="col-xs-3">카테고리</div>
-        </div>
-        <div class="row" ng-repeat="data in datas">
-          <div class="col-xs-3">{{data.input_time}}</div>
-          <div class="col-xs-3">{{data.item}}</div>
-          <div class="col-xs-3">{{data.money}}</div>
-          <div class="col-xs-3">{{data.category}}</div>
-        </div>
+      <div class="row">
+        <div class="col-xs-6">카테고리</div>
+        <div class="col-xs-6">잔고</div>
+      </div>
+      <div class="row" ng-repeat="category in categories">
+        <div class="col-xs-6">{{category.name}}</div>
+        <div class="col-xs-6">{{category.money}}</div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">총계</div>
+        <div class="col-xs-6">{{balance}}</div>
+      </div>
+
+      <div class="row" style="background-color:silver">
+        <div class="col-xs-3">날짜</div>
+        <div class="col-xs-3">사용 내역</div>
+        <div class="col-xs-3">금액</div>
+        <div class="col-xs-3">카테고리</div>
+      </div>
+      <div class="row" ng-repeat="data in datas">
+        <div class="col-xs-3">{{data.input_time}}</div>
+        <div class="col-xs-3">{{data.item}}</div>
+        <div class="col-xs-3">{{data.money}}</div>
+        <div class="col-xs-3">{{data.category}}</div>
+      </div>
 
     </div>
 	</body>

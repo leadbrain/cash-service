@@ -3,6 +3,10 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
     $scope.categories = category_list;
   });
 
+  $http.get('api/v0.1/balance/').success(function(balance) {
+    $scope.balance = balance.money;
+  });
+
   $http.get('api/v0.1/data/').success(function(data_list) {
     $scope.datas = [];
     for (key in data_list) {
@@ -49,7 +53,8 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
                                      "type" : "in"})
     .success(function(result) {
       var category = {"id" : result.id,
-                      "name" : $scope.newCategory };
+                      "name" : $scope.newCategory,
+                      "money" : 0};
       $scope.updateCategory(category);
     });
   };
