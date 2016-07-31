@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS data (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
                                  item VARCHAR(255),
                                  money INT,
                                  category INT,
+                                 account INT,
                                  create_time INT,
                                  input_time INT)
 
@@ -17,11 +18,11 @@ CREATE TABLE IF NOT EXISTS balance(id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
                                    money INT)
 
 --name: get-data
-SELECT input_time, item, money, category
+SELECT input_time, item, money, category, account
 FROM data
 
 --name: get-data-by-category
-SELECT id, input_time, item, money, category
+SELECT id, input_time, item, money, category, account
 FROM data
 WHERE category=(:category)
 
@@ -31,8 +32,18 @@ SET category=(:category)
 WHERE id=(:id)
 
 --name: set-data<!
-INSERT into data (item, money, category, input_time)
-VALUES (:item, :money, :category, :input_time)
+INSERT INTO data (item, money, category, input_time, account)
+VALUES (:item, :money, :category, :input_time, :account)
+
+--name: update-account!
+UPDATE data
+SET account=(:to)
+WHERE account=(:from)
+
+--name: get-data-by-account
+SELECT id, input_time, item, money, category, account
+FROM data
+WHERE account=(:account)
 
 --name: get-category
 SELECT id, name, type, money
@@ -44,7 +55,7 @@ FROM category
 WHERE id=(:id)
 
 --name: set-category<!
-INSERT into category (name, type, money)
+INSERT INTO category (name, type, money)
 VALUES (:name, :type, :money)
 
 --name: update-category-money!
@@ -53,7 +64,7 @@ SET money=(:money)
 WHERE id=(:id)
 
 --name: delete-category!
-DELETE from category
+DELETE FROM category
 WHERE id=(:id)
 
 --name: set-balance<!
@@ -77,3 +88,5 @@ DROP TABLE IF EXISTS category
 
 --name: drop-balance-table!
 DROP TABLE IF EXISTS balance
+
+

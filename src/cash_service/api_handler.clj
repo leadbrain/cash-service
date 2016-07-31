@@ -12,13 +12,15 @@
             [cheshire.core :as json]
             [cash-service.data :as data]
             [cash-service.category :as category]
-            [cash-service.balance :as balance]))
+            [cash-service.balance :as balance]
+            [cash-service.account :as account]))
 
 (declare convertIdToCaterory)
 (declare getDataList)
 (declare setDefaultCategory)
 (declare deleteCategory)
 (declare setData)
+(declare swapAccount)
 
 
 (defroutes api-routes
@@ -46,10 +48,11 @@
         ;{body :body} (slurp body)))
 
   (POST "/api/v0.1/data/" request
-        (let [id (get-in request [:body :category])]
-          (if (category/contain? id)
+        (let [categoryId (get-in request [:body :category])
+              accountId (get-in request [:body :account])]
+          (if (and (category/contain? categoryId) (account/contain? accountId))
             (setData (request :body)))
-          (if (category/contain? id)
+          (if (and (category/contain? categoryId) (account/contain? accountId))
             (res/response {:result "OK"})
             (res/response {:result "Error"}))))
 
@@ -58,13 +61,30 @@
 
   (DELETE "/api/v0.1/category/:id/" [id]
           (deleteCategory id)
-          (res/response {:result "OK"})))
+          (res/response {:result "OK"}))
+
+  (context "/api/v0.1/account" []
+           (POST "/" request
+                 (res/response {:result "OK" :id (-> (request :body) account/addAccount)}))
+           (context "/:id" [id]
+                    (GET "/" []
+                         (res/response (merge {:result "OK"} (account/getAccount id))))
+                    (DELETE "/" []
+                            (if (not (data/anyAccount? id))
+                              (account/deleteAccount id))
+                            (if (not (data/anyAccount? id))
+                              (res/response {:result "OK"})
+                              (res/response {:result "Error"})))
+                    (PUT "/" request
+                         (if (swapAccount id (get-in request [:body :id]))
+                           (res/response {:result "OK"})
+                           (res/response {:result "Error"}))))))
 
 (defn convertIdToCaterory [item]
   (assoc item :category ((category/getItem (item :category)) :name )))
 
 (defn getDataList[]
-  (map convertIdToCaterory (data/getList)))
+  (data/getList))
 
 (defn setDefaultCategory [item]
   (assoc item :category 1))
@@ -75,11 +95,19 @@
     (balance/increaseMoney (* ((category/getItem id) :money) 2)))
   (category/delete id))
 
+(defn increaseMoney [accountId money]
+  (balance/increaseMoney money)
+  (account/increaseBalance accountId money))
+
+(defn decreaseMoney [accountId money]
+  (balance/decreaseMoney money)
+  (account/decreaseBalance accountId money))
+
 (defn setData [item]
   (data/setItem item)
   (case ((category/getItem (item :category)) :type)
-    "in" (balance/increaseMoney (item :money))
-    "out" (balance/decreaseMoney (item :money))
+    "in" (increaseMoney (item :account) (item :money))
+    "out" (decreaseMoney (item :account) (item :money))
     "default" (print (item :type)))
   (category/increaseMoney (item :category) (item :money)))
 
@@ -93,3 +121,9 @@
   {:status  (or status 200)
    :headers {"Content-Type" "application/hal+json; charset=utf-8"}
    :body    (json/generate-string data)})
+
+(defn swapAccount [from to]
+  (def success (and (account/contain? from) (account/contain? to)))
+  (if success
+    (data/updateAccount from to))
+  success)
