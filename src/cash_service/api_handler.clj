@@ -15,19 +15,17 @@
             [cash-service.balance :as balance]
             [cash-service.account :as account]))
 
-(declare convertIdToCaterory)
-(declare getDataList)
-(declare setDefaultCategory)
-(declare deleteCategory)
 (declare setData)
 (declare swapAccount)
+(declare swapCategory)
 
 
 (defroutes api-routes
   (context "/api/v0.1" []
            (context "/data" []
                     (GET "/" []
-                         (res/response (getDataList)))
+                         (res/response (data/getList)))
+
                     (POST "/" request
                           (let [categoryId (get-in request [:body :category])
                                 accountId (get-in request [:body :account])]
@@ -36,30 +34,49 @@
                             (if (and (category/contain? categoryId) (account/contain? accountId))
                               (res/response {:result "OK"})
                               (res/response {:result "Error"})))))
+
            (context "/category" []
                     (GET "/" []
                          (res/response (category/getList)))
+
                     (POST "/" request
                           (res/response {:result "OK" :id (-> (request :body) category/setItem first val)}))
-                    (DELETE "/:id/" [id]
-                            (deleteCategory id)
-                            (res/response {:result "OK"})))
+
+                    (context "/:id" [id]
+                             (DELETE "/" []
+                                     (if (not (data/anyCategory? id))
+                                       (category/delete id))
+                                     (if (not (data/anyCategory? id))
+                                       (res/response {:result "OK"})
+                                       (res/response {:result "Error"})))
+
+                             (PUT "/" request
+                                  (if (swapCategory id (get-in request [:body :id]))
+                                    (res/response {:result "OK"})
+                                    (res/response {:result "Error"})))))
+
+
+
            (context "/account" []
                     (POST "/" request
                           (res/response {:result "OK" :id (-> (request :body) account/addAccount)}))
+
                     (context "/:id" [id]
                              (GET "/" []
                                   (res/response (merge {:result "OK"} (account/getAccount id))))
+
                              (DELETE "/" []
                                      (if (not (data/anyAccount? id))
                                        (account/deleteAccount id))
                                      (if (not (data/anyAccount? id))
                                        (res/response {:result "OK"})
                                        (res/response {:result "Error"})))
+
                              (PUT "/" request
                                   (if (swapAccount id (get-in request [:body :id]))
                                     (res/response {:result "OK"})
                                     (res/response {:result "Error"})))))
+
            (GET "/balance/" []
                 (res/response {:money ((balance/getItem) :money)}))
 
@@ -76,22 +93,6 @@
                  (res/redirect "/home")))) ; temporary redirect for leadbrain
                   ; It does not ready for json type yet.
                   ;{body :body} (slurp body)))
-
-
-(defn convertIdToCaterory [item]
-  (assoc item :category ((category/getItem (item :category)) :name )))
-
-(defn getDataList[]
-  (data/getList))
-
-(defn setDefaultCategory [item]
-  (assoc item :category 1))
-
-(defn deleteCategory [id]
-  (data/updateByArray (map setDefaultCategory (data/getByCategory id)))
-  (if (= ((category/getItem id) :type) "out")
-    (balance/increaseMoney (* ((category/getItem id) :money) 2)))
-  (category/delete id))
 
 (defn increaseMoney [accountId money]
   (balance/increaseMoney money)
@@ -120,8 +121,22 @@
    :headers {"Content-Type" "application/hal+json; charset=utf-8"}
    :body    (json/generate-string data)})
 
+(defn updateAccount [from to]
+  (data/updateAccount from to)
+  (account/swap from to))
+
 (defn swapAccount [from to]
   (def success (and (account/contain? from) (account/contain? to)))
   (if success
-    (data/updateAccount from to))
+    (updateAccount from to))
+  success)
+
+(defn updateCategory [from to]
+  (data/updateCategory from to)
+  (category/swap from to))
+
+(defn swapCategory [from to]
+  (def success (and (category/contain? from) (category/contain? to) (category/sameType? from to)))
+  (if success
+    (updateCategory from to))
   success)

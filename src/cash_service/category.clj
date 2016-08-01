@@ -13,12 +13,10 @@
   (get-category))
 
 (defn contain? [id]
-  (not-empty (filter #(= id (% :id)) (getList))))
+  (not-empty (get-category-by-id {:id id})))
 
 (defn init []
-  (create-category-table!)
-  (if-not (contain? 1)
-    (set-category<! {:name "none" :type "in" :money 0})))
+  (create-category-table!))
 
 (defn getItem [id]
     (first (get-category-by-id {:id id})))
@@ -32,7 +30,6 @@
     (update-category-money! {:id id :money balance})))
 
 (defn deleteProcess [id]
-  (increaseMoney 1 ((getItem id) :money))
   (delete-category! {:id id}))
 
 (defn delete [id]
@@ -41,3 +38,9 @@
 
 (defn setItem [item]
   (set-category<! item))
+
+(defn swap [from to]
+  (update-category-money! {:id to :money (+ ((getItem from) :money) ((getItem to) :money))}))
+
+(defn sameType? [one two]
+  (= ((getItem one) :type) ((getItem two) :type)))

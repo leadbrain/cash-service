@@ -30,10 +30,20 @@ UPDATE data
 SET account=(:to)
 WHERE account=(:from)
 
+--name: update-category!
+UPDATE data
+SET category=(:to)
+WHERE category=(:from)
+
 --name: get-data-by-account
 SELECT id, input_time, item, money, category, account
 FROM data
 WHERE account=(:account)
+
+--name: get-data-by-category
+SELECT id, input_time, item, money, category, account
+FROM data
+WHERE category=(:category)
 
 --name: drop-data-table!
 DROP TABLE IF EXISTS data

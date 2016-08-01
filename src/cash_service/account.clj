@@ -32,5 +32,8 @@
 (defn contain? [id]
   (not-empty (get-account-by-id {:id id})))
 
+(defn swap [from to]
+  (increaseBalance to ((getAccount from) :balance)))
+
 (defn deleteAccount [id]
   (delete-account! {:id id}))

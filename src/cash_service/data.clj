@@ -26,14 +26,17 @@
 (defn getList []
   (get-data))
 
-(defn updateByArray [array]
-  (doseq [item array] (update-data-category! item)))
-
 (defn getByCategory [id]
   (get-data-by-category {:category id}))
 
 (defn updateAccount [from to]
   (update-account! {:from from :to to}))
 
+(defn updateCategory [from to]
+  (update-category! {:from from :to to}))
+
 (defn anyAccount? [id]
   (not-empty (get-data-by-account {:account id})))
+
+(defn anyCategory? [id]
+  (not-empty (get-data-by-category {:category id})))
