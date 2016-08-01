@@ -1,5 +1,10 @@
 (ns cash-service.category
-  (:require [cash-service.db-handler :refer :all]))
+  (:require [yesql.core :refer [defqueries]]
+            [clojure.core.async :refer [<!]]
+            [cash-service.db-configure :refer [db-spec]]))
+
+(defqueries "cash_service/sql/category.sql"
+  {:connection db-spec})
 
 (defn destroy []
   (drop-category-table!))
