@@ -1,7 +1,6 @@
 (ns cash-service.account-test
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
-            [cash-service.handler :refer :all]
             [cash-service.account :as account]
             [cheshire.core :as json]))
 
