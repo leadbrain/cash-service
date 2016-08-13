@@ -1,12 +1,7 @@
 (ns cash-service.account
   (:require [yesql.core :refer [defqueries]]
-            [clojure.core.async :refer [<!]]))
-
-(def db-spec {:classname "org.h2.Driver"
-              :subprotocol "h2:file"
-              :subname "./db/data"
-              :user "test"
-              :password ""})
+            [clojure.core.async :refer [<!]]
+            [cash-service.db-configure :refer [db-spec]]))
 
 (defqueries "cash_service/sql/account.sql"
   {:connection db-spec})
@@ -36,6 +31,9 @@
 
 (defn contain? [id]
   (not-empty (get-account-by-id {:id id})))
+
+(defn swap [from to]
+  (increaseBalance to ((getAccount from) :balance)))
 
 (defn deleteAccount [id]
   (delete-account! {:id id}))

@@ -15,85 +15,84 @@
             [cash-service.balance :as balance]
             [cash-service.account :as account]))
 
-(declare convertIdToCaterory)
-(declare getDataList)
-(declare setDefaultCategory)
-(declare deleteCategory)
 (declare setData)
 (declare swapAccount)
+(declare swapCategory)
 
 
 (defroutes api-routes
-  (GET "/api/v0.1/data/" []
-       (res/response (getDataList)))
-
-  (GET "/api/v0.1/balance/" []
-       (res/response {:money ((balance/getItem) :money)}))
-
-  (GET "/api/v0.1/category/" []
-       (res/response (category/getList)))
-
-  (POST "/api/v0.1/login" [param :as request]
-        ; TO DO
-        (str param)
-        (res/redirect "/home")) ; temporary redirect for leadbrain
-        ; It does not ready for json type yet.
-        ;{body :body} (slurp body))
-
-  (POST "/api/v0.1/signup" [param :as request]
-        (str param)
-        ; TO DO
-        (res/redirect "/home")) ; temporary redirect for leadbrain
-        ; It does not ready for json type yet.
-        ;{body :body} (slurp body)))
-
-  (POST "/api/v0.1/data/" request
-        (let [categoryId (get-in request [:body :category])
-              accountId (get-in request [:body :account])]
-          (if (and (category/contain? categoryId) (account/contain? accountId))
-            (setData (request :body)))
-          (if (and (category/contain? categoryId) (account/contain? accountId))
-            (res/response {:result "OK"})
-            (res/response {:result "Error"}))))
-
-  (POST "/api/v0.1/category/" request
-        (res/response {:result "OK" :id (-> (request :body) category/setItem first val)}))
-
-  (DELETE "/api/v0.1/category/:id/" [id]
-          (deleteCategory id)
-          (res/response {:result "OK"}))
-
-  (context "/api/v0.1/account" []
-           (POST "/" request
-                 (res/response {:result "OK" :id (-> (request :body) account/addAccount)}))
-           (context "/:id" [id]
+  (context "/api/v0.1" []
+           (context "/data" []
                     (GET "/" []
-                         (res/response (merge {:result "OK"} (account/getAccount id))))
-                    (DELETE "/" []
-                            (if (not (data/anyAccount? id))
-                              (account/deleteAccount id))
-                            (if (not (data/anyAccount? id))
+                         (res/response (data/getList)))
+
+                    (POST "/" request
+                          (let [categoryId (get-in request [:body :category])
+                                accountId (get-in request [:body :account])]
+                            (if (and (category/contain? categoryId) (account/contain? accountId))
+                              (setData (request :body)))
+                            (if (and (category/contain? categoryId) (account/contain? accountId))
                               (res/response {:result "OK"})
-                              (res/response {:result "Error"})))
-                    (PUT "/" request
-                         (if (swapAccount id (get-in request [:body :id]))
-                           (res/response {:result "OK"})
-                           (res/response {:result "Error"}))))))
+                              (res/response {:result "Error"})))))
 
-(defn convertIdToCaterory [item]
-  (assoc item :category ((category/getItem (item :category)) :name )))
+           (context "/category" []
+                    (GET "/" []
+                         (res/response (category/getList)))
 
-(defn getDataList[]
-  (data/getList))
+                    (POST "/" request
+                          (res/response {:result "OK" :id (-> (request :body) category/setItem first val)}))
 
-(defn setDefaultCategory [item]
-  (assoc item :category 1))
+                    (context "/:id" [id]
+                             (DELETE "/" []
+                                     (if (not (data/anyCategory? id))
+                                       (category/delete id))
+                                     (if (not (data/anyCategory? id))
+                                       (res/response {:result "OK"})
+                                       (res/response {:result "Error"})))
 
-(defn deleteCategory [id]
-  (data/updateByArray (map setDefaultCategory (data/getByCategory id)))
-  (if (= ((category/getItem id) :type) "out")
-    (balance/increaseMoney (* ((category/getItem id) :money) 2)))
-  (category/delete id))
+                             (PUT "/" request
+                                  (if (swapCategory id (get-in request [:body :id]))
+                                    (res/response {:result "OK"})
+                                    (res/response {:result "Error"})))))
+
+
+
+           (context "/account" []
+                    (POST "/" request
+                          (res/response {:result "OK" :id (-> (request :body) account/addAccount)}))
+
+                    (context "/:id" [id]
+                             (GET "/" []
+                                  (res/response (merge {:result "OK"} (account/getAccount id))))
+
+                             (DELETE "/" []
+                                     (if (not (data/anyAccount? id))
+                                       (account/deleteAccount id))
+                                     (if (not (data/anyAccount? id))
+                                       (res/response {:result "OK"})
+                                       (res/response {:result "Error"})))
+
+                             (PUT "/" request
+                                  (if (swapAccount id (get-in request [:body :id]))
+                                    (res/response {:result "OK"})
+                                    (res/response {:result "Error"})))))
+
+           (GET "/balance/" []
+                (res/response {:money ((balance/getItem) :money)}))
+
+           (POST "/login/" [param :as request]
+                 ; TO DO
+                 (str param)
+                 (res/redirect "/home")) ; temporary redirect for leadbrain
+           ; It does not ready for json type yet.
+           ;{body :body} (slurp body))
+
+           (POST "/signup/" [param :as request]
+                 (str param)
+                 ; TO DO
+                 (res/redirect "/home")))) ; temporary redirect for leadbrain
+                  ; It does not ready for json type yet.
+                  ;{body :body} (slurp body)))
 
 (defn increaseMoney [accountId money]
   (balance/increaseMoney money)
@@ -122,8 +121,22 @@
    :headers {"Content-Type" "application/hal+json; charset=utf-8"}
    :body    (json/generate-string data)})
 
+(defn updateAccount [from to]
+  (data/updateAccount from to)
+  (account/swap from to))
+
 (defn swapAccount [from to]
   (def success (and (account/contain? from) (account/contain? to)))
   (if success
-    (data/updateAccount from to))
+    (updateAccount from to))
+  success)
+
+(defn updateCategory [from to]
+  (data/updateCategory from to)
+  (category/swap from to))
+
+(defn swapCategory [from to]
+  (def success (and (category/contain? from) (category/contain? to) (category/sameType? from to)))
+  (if success
+    (updateCategory from to))
   success)

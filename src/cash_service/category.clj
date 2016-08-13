@@ -1,5 +1,10 @@
 (ns cash-service.category
-  (:require [cash-service.db-handler :refer :all]))
+  (:require [yesql.core :refer [defqueries]]
+            [clojure.core.async :refer [<!]]
+            [cash-service.db-configure :refer [db-spec]]))
+
+(defqueries "cash_service/sql/category.sql"
+  {:connection db-spec})
 
 (defn destroy []
   (drop-category-table!))
@@ -8,12 +13,10 @@
   (get-category))
 
 (defn contain? [id]
-  (not-empty (filter #(= id (% :id)) (getList))))
+  (not-empty (get-category-by-id {:id id})))
 
 (defn init []
-  (create-category-table!)
-  (if-not (contain? 1)
-    (set-category<! {:name "none" :type "in" :money 0})))
+  (create-category-table!))
 
 (defn getItem [id]
     (first (get-category-by-id {:id id})))
@@ -27,12 +30,17 @@
     (update-category-money! {:id id :money balance})))
 
 (defn deleteProcess [id]
-  (increaseMoney 1 ((getItem id) :money))
   (delete-category! {:id id}))
 
 (defn delete [id]
-  (if-not (= id 1)
-    (deleteProcess id)))
+  (deleteProcess id))
 
 (defn setItem [item]
   (set-category<! item))
+
+(defn swap [from to]
+  (update-category-money! {:id to :money (+ ((getItem from) :money) ((getItem to) :money))})
+  (update-category-money! {:id from :money 0}))
+
+(defn sameType? [one two]
+  (= ((getItem one) :type) ((getItem two) :type)))
