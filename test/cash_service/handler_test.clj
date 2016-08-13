@@ -2,10 +2,7 @@
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
             [cash-service.handler :refer :all]
-            [cash-service.balance :as balance]
-            [cash-service.category :as category]
-            [cheshire.core :as json]
-            [ring.util.anti-forgery :as anti]))
+            [cheshire.core :as json]))
 
 (defn json-request [method uri body]
   (-> (mock/request method uri (json/generate-string body))
@@ -13,7 +10,7 @@
 
 (defn fixture [f]
   (init)
-  (api-and-app (json-request :post "/api/v0.1/category/" {:name "none" :type "in" :money 0}))
+  (api-and-app (json-request :post "/api/v0.1/category/" {:name "none" :type :in :money 0}))
   (api-and-app (json-request :post "/api/v0.1/account/" {:name "test", :balance 0}))
   (f)
   (destroy))
@@ -58,14 +55,6 @@
     (let [response (api-and-app (mock/request :get "/invalid"))]
       (is (= (:status response) 404)))))
 
-(deftest test-balance
-  (testing "set balance"
-    (balance/init)
-    (is (= ((balance/getItem) :money) 0))
-    (balance/decreaseMoney 2000)
-    (is (= ((balance/getItem) :money) -2000))))
-
-
 (deftest test-balance-api
   (testing "balance"
     (let [response (api-and-app (json-request :post "/api/v0.1/account/" {:name "test", :balance 0}))]
@@ -106,7 +95,7 @@
 
 (deftest test-category
   (testing "add"
-    (let [response (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate1" :type "out" :money 0}))]
+    (let [response (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate1" :type :out :money 0}))]
       (is (check response {:result "OK" :id 2})))
 
     (let [response (api-and-app (mock/request :get "/api/v0.1/category/"))]
@@ -146,7 +135,7 @@
     (let [response (api-and-app (mock/request :delete "/api/v0.1/category/2/"))]
       (is (check response {:result "Error"})))
 
-    (let [response (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate2" :type "out" :money 0}))]
+    (let [response (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate2" :type :out :money 0}))]
       (is (check response {:result "OK" :id 3})))
 
     (let [response (api-and-app (json-request :put "/api/v0.1/category/2/" {:id 3}))]
@@ -168,7 +157,7 @@
 
 (deftest test-account
   (testing "delete account"
-    (let [response (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate1" :type "in" :money 0}))]
+    (let [response (api-and-app (json-request :post "/api/v0.1/category/" {:name "cate1" :type :in :money 0}))]
       (is (check response {:result "OK" :id 2})))
 
     (let [response (api-and-app (json-request :post "/api/v0.1/account/" {:name "account2", :balance 0}))]

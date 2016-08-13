@@ -33,14 +33,14 @@
   (delete-category! {:id id}))
 
 (defn delete [id]
-  (if-not (= id 1)
-    (deleteProcess id)))
+  (deleteProcess id))
 
 (defn setItem [item]
   (set-category<! item))
 
 (defn swap [from to]
-  (update-category-money! {:id to :money (+ ((getItem from) :money) ((getItem to) :money))}))
+  (update-category-money! {:id to :money (+ ((getItem from) :money) ((getItem to) :money))})
+  (update-category-money! {:id from :money 0}))
 
 (defn sameType? [one two]
   (= ((getItem one) :type) ((getItem two) :type)))
