@@ -58,6 +58,9 @@
 
 
            (context "/account" []
+                    (GET "/" []
+                         (res/response (account/getAccounts)))
+
                     (POST "/" request
                           (res/response {:result "OK" :id (-> (request :body) account/addAccount)}))
 

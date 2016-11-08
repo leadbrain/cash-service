@@ -15,7 +15,7 @@
 
 (defroutes app-routes
   (GET "/" []
-    (res/redirect "/login"))
+    (res/redirect "/home"))
 
   (GET "/bob" []
     (let [response (http/get "https://www.infraware.net/ajax/boards/GetRestaurantmenuImage")]

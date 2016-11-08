@@ -7,10 +7,9 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
     $scope.balance = balance.money;
   });
 
-  $http.post('api/v0.1/account/', {"name" : "test",
-                                   "balance" : 0});
-
-
+  $http.get('api/v0.1/account/').success(function(account_list) {
+    $scope.accounts = account_list;
+  });
 
   $http.get('api/v0.1/data/').success(function(data_list) {
     $scope.datas = [];
@@ -22,10 +21,18 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
           break;
         }
       }
+      for (key in $scope.accounts) {
+        if ($scope.accounts[key].id === data["account"]) {
+          data["account"] = $scope.accounts[key].name;
+          break;
+        }
+      }
       data.input_time = moment.unix(data.input_time).format("YYYY. M. D hh:mm:ss");
       $scope.datas.push(data);
     }
   });
+
+  $scope.isCollapsed = true;
 
   $scope.updateData = function(data) {
     for (key in $scope.categories) {
@@ -34,6 +41,12 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
         break;
       }
     }
+    for (key in $scope.accounts) {
+        if ($scope.accounts[key].id === data["account"]) {
+          data["account"] = $scope.accounts[key].name;
+          break;
+        }
+      }
     data.input_time = moment.unix(data.input_time).format("YYYY. M. D hh:mm:ss");
     $scope.datas.push(data);
   };
@@ -44,7 +57,7 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
                   "item" : $scope.item,
                   "money" : Number($scope.money),
                   "category" : Number($scope.selectedCategory.id),
-                  "account" : Number(1)};
+                  "account" : Number($scope.selectedAccount.id)};
       $http.post('api/v0.1/data/', JSON.stringify(data));
       $scope.updateData(data);
       $scope.item = null;
@@ -62,11 +75,12 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
   $scope.addCategory = function() {
     $http.post('api/v0.1/category/',{"name" : $scope.newCategory,
                                      "money" : 0,
-                                     "type" : "in"})
+                                     "type" : $scope.newCategoryType})
     .success(function(result) {
       var category = {"id" : result.id,
                       "name" : $scope.newCategory,
-                      "money" : 0};
+                      "money" : 0,
+                      "type" : $scope.newCategoryType};
       $scope.updateCategory(category);
     });
   };
@@ -81,6 +95,35 @@ angular.module('cashApp', ['ui.bootstrap']).controller('cashController', functio
     }
     delete $scope.categories[index];
     $scope.toDeleteCategory = null;
+    console.log($scope.options);
+  };
+
+  $scope.updateAccount = function(account) {
+    $scope.accounts.push(account);
+    $scope.newAccount = null;
+  }
+
+  $scope.addAccount = function() {
+    $http.post('api/v0.1/account/',{"name" : $scope.newAccount,
+                                     "balance" : 0})
+    .success(function(result) {
+      var account = {"id" : result.id,
+                      "name" : $scope.newAccount,
+                      "balance" : 0};
+      $scope.updateAccount(account);
+    });
+  };
+
+  $scope.deleteAccount = function() {
+    $http.delete('api/v0.1/account/' + $scope.toDeleteAccount.id + '/');
+    var index;
+    for (index in $scope.accounts) {
+      if ($scope.accounts[index].id === Number($scope.toDeleteAccount.id)) {
+        break;
+      }
+    }
+    delete $scope.accounts[index];
+    $scope.toDeleteAccount = null;
     console.log($scope.options);
   };
 
