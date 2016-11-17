@@ -25,6 +25,4 @@
        (io/resource "public/login.html"))
 
   (GET "/home" []
-       (io/resource "public/index.html"))
-
-  (route/not-found (io/resource "404.html")))
+       (io/resource "public/index.html")))

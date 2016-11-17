@@ -9,7 +9,8 @@
             [cash-service.balance :as balance]
             [cash-service.account :as account]
             [cash-service.api-handler :refer [api-routes]]
-            [cash-service.app-handler :refer [app-routes]]))
+            [cash-service.app-handler :refer [app-routes]]
+            [cash-service.api :refer [app]]))
 
 (defn init []
   (data/init)
@@ -30,4 +31,5 @@
         (ring-json/wrap-json-response)
         (wrap-defaults (assoc site-defaults :security {:anti-forgery false})))
     (-> app-routes)
+    (-> app)
     (route/not-found "Not Found")))

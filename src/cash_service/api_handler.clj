@@ -19,7 +19,6 @@
 (declare swapAccount)
 (declare swapCategory)
 
-
 (defroutes api-routes
   (context "/api/v0.1" []
            (context "/data" []
