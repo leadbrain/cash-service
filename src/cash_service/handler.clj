@@ -25,6 +25,7 @@
 
 (def api-and-app
   (routes
-    (-> app-routes)
+    (-> app-routes
+        (wrap-defaults (assoc site-defaults :security {:anti-forgery false})))
     (-> app)
     (route/not-found "Not Found")))
