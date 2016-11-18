@@ -10,6 +10,7 @@
                  [cheshire "5.5.0"]
                  [yesql "0.5.3"]
                  [com.h2database/h2 "1.4.191"]
+                 [mysql/mysql-connector-java "5.1.32"]
                  [clj-http "3.0.1"]
                  [metosin/compojure-api "1.1.9"]]
   :plugins [[lein-ring "0.9.7"]]
