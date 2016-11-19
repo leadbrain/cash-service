@@ -22,7 +22,7 @@
 
 (defn check [response expect]
   (is (= (:status response) 200))
-  (is (= (json/parse-string (:body response) true) expect)))
+  (is (= (json/parse-stream (java.io.InputStreamReader. (:body response)) true) expect)))
 
 (deftest test-app
   ;; YW.Jang is responsible for this.
