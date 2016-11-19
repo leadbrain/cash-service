@@ -27,12 +27,35 @@
    :type (s/enum :in :out)
    :money s/Int})
 
+(s/defschema CategoryResponse
+  {:id s/Int
+   :name s/Str
+   :type (s/enum :in :out)
+   :money s/Int})
+
 (s/defschema AccountRequest
   {:name s/Str
    :balance s/Int})
 
+(s/defschema AccountResponse
+  {:id s/Int
+   :name s/Str
+   :balance s/Int})
+
+(s/defschema AccountSingleResponse
+  {:result (s/enum :OK :Error)
+   :name s/Str
+   :balance s/Int})
+
 (s/defschema PutRequest
   {:id s/Int})
+
+(s/defschema IdResult
+  {:result (s/enum :OK :Error)
+   :id s/Int})
+
+(s/defschema BalanceResponse
+  {:money s/Int})
 
 (defroutes app
   (api
@@ -40,7 +63,8 @@
      {:ui "/apidoc"
       :spec "/swagger.json"
       :data {:info {:title "Cash-service"
-                    :description "Cash service Api"}
+                    :description "Cash service Api"
+                    :version "0.1"}
              :tags [{:name "data", :description "data apis"}
                     {:name "category", :description "category apis"}
                     {:name "account", :description "account apis"}
@@ -61,38 +85,50 @@
              (context "/category" []
                       :tags ["category"]
                       (GET "/" []
-                         (ok (getCategory)))
+                           :return [CategoryResponse]
+                           (ok (getCategory)))
 
                       (POST "/" []
+                            :return IdResult
                             :body [data CategoryRequest]
                             (ok (setCategory data)))
 
                       (context "/:id" [id]
                              (DELETE "/" [id]
+                                     :return Result
                                      (ok (deleteCategory id)))
 
                              (PUT "/" [id]
+                                  :return Result
                                   :body [data PutRequest]
                                   (ok (putCategory id (data :id))))))
 
              (context "/account" []
                       :tags ["account"]
                       (GET "/" []
+                           :return [AccountResponse]
                            (ok (getAccountList)))
 
                       (POST "/" request
+                            :return IdResult
                             :body [data AccountRequest]
                             (ok (setAccount data)))
 
                       (context "/:id" [id]
                                (GET "/" [id]
+                                    :return AccountSingleResponse
                                     (ok (getAccount id)))
+
                                (DELETE "/" [id]
+                                       :return Result
                                        (ok (deleteAccount id)))
+
                                (PUT "/" [id]
+                                    :return Result
                                     :body [data PutRequest]
                                     (ok (putAccount id (data :id))))))
 
              (GET "/balance/" []
                   :tags ["balance"]
+                  :return BalanceResponse
                   (ok (getBalance))))))
