@@ -46,13 +46,13 @@
       <div class="row" ng-repeat="data in datas">
         <div class="col-xs-2">{{data.input_time}}</div>
         <div class="col-xs-2">{{data.item}}</div>
-        <div class="col-xs-2">{{data.money}}</div>
+        <div class="col-xs-2">{{data.money.toLocaleString()}}</div>
         <div class="col-xs-2">{{data.category}}</div>
         <div class="col-xs-2">{{data.account}}</div>
       </div>
       <div class="row">
         <div class="col-xs-6">총계</div>
-        <div class="col-xs-6">{{balance}}</div>
+        <div class="col-xs-6">{{balance.toLocaleString()}}</div>
       </div>
 
       <br/>
@@ -64,7 +64,7 @@
       </div>
       <div class="row" ng-repeat="category in categories">
         <div class="col-xs-4">{{category.name}}</div>
-        <div class="col-xs-4">{{category.money}}</div>
+        <div class="col-xs-4">{{category.money.toLocaleString()}}</div>
         <div class="col-xs-4">{{category.type}}</div>
       </div>
       <br/>
@@ -74,7 +74,7 @@
       </div>
       <div class="row" ng-repeat="account in accounts">
         <div class="col-xs-6">{{account.name}}</div>
-        <div class="col-xs-6">{{account.balance}}</div>
+        <div class="col-xs-6">{{account.balance.toLocaleString()}}</div>
       </div>
 
       <br/>
