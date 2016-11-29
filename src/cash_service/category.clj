@@ -21,6 +21,9 @@
 (defn getItem [id]
     (first (get-category-by-id {:id id})))
 
+(defn getCategoryType [id]
+  ((getItem id) :type))
+
 (defn increaseMoney [id money]
   (let [balance (+ ((getItem id) :money) money)]
     (update-category-money! {:id id :money balance})))
@@ -29,14 +32,11 @@
   (let [balance (- ((getItem id) :money) money)]
     (update-category-money! {:id id :money balance})))
 
-(defn deleteProcess [id]
+(defn delete [id]
   (delete-category! {:id id}))
 
-(defn delete [id]
-  (deleteProcess id))
-
 (defn setItem [item]
-  (set-category<! item))
+  (-> (set-category<! item) first val))
 
 (defn swap [from to]
   (update-category-money! {:id to :money (+ ((getItem from) :money) ((getItem to) :money))})

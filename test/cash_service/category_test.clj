@@ -1,6 +1,5 @@
 (ns cash-service.category-test
   (:require [clojure.test :refer :all]
-            [ring.mock.request :as mock]
             [cash-service.category :as category]))
 
 (defn fixture [f]

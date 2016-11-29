@@ -1,21 +1,22 @@
 --name: create-table!
 CREATE TABLE IF NOT EXISTS account(id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
                                    name VARCHAR(255),
+                                   type VARCHAR(255),
                                    balance INT)
 
 --name: insert-account<!
-INSERT INTO account (name, balance)
-VALUES (:name, :balance)
+INSERT INTO account (name, type, balance)
+VALUES (:name, :type, :balance)
 
 --name: drop-table!
 DROP TABLE IF EXISTS account
 
 --name: get-accounts
-SELECT id, name, balance
+SELECT id, name, type, balance
 FROM account
 
 --name: get-account
-SELECT name, balance
+SELECT name, type, balance
 FROM account
 WHERE id=(:id)
 
@@ -26,9 +27,4 @@ WHERE id=(:id)
 
 --name: delete-account!
 DELETE FROM account
-WHERE id=(:id)
-
---name: get-account-by-id
-SELECT id, name, balance
-FROM account
 WHERE id=(:id)

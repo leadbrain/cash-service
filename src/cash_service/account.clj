@@ -21,6 +21,9 @@
 (defn getAccount [id]
   (first (get-account {:id id})))
 
+(defn getAccountType [id]
+  ((getAccount id) :type))
+
 (defn increaseBalance [id money]
   (let [balance (+ ((getAccount id) :balance) money)]
     (update-account! {:id id :balance balance})))
@@ -30,7 +33,7 @@
     (update-account! {:id id :balance balance})))
 
 (defn contain? [id]
-  (not-empty (get-account-by-id {:id id})))
+  (not-empty (get-account {:id id})))
 
 (defn swap [from to]
   (increaseBalance to ((getAccount from) :balance)))

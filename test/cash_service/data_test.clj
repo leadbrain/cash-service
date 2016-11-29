@@ -14,16 +14,18 @@
 (deftest data-test
   (testing "add data"
     (is (empty (getList)))
-    (setItem {:item "test" :money 3000 :category 1 :account 1})
+    (setItem {:item "test" :amount 3000 :from_type "account" :from_id 1 :to_type "category" :to_id 1})
     (is (= (count (getList)) 1))
     (let [data (first (getList))]
       (is (= (data :item) "test"))
-      (is (= (data :money) 3000))
-      (is (= (data :category) 1))
-      (is (= (data :account) 1))))
+      (is (= (data :amount) 3000))
+      (is (= (data :from_type) "account"))
+      (is (= (data :from_id) 1))
+      (is (= (data :to_type) "category"))
+      (is (= (data :to_id) 1))))
 
   (testing "get by category"
-    (setItem {:item "test2" :money 2000 :category 2 :account 2})
+    (setItem {:item "test2" :amount 2000 :from_type "account" :from_id 2 :to_type "category" :to_id 2})
     (let [data (first (getByCategory 2))]
       (is (= (data :item) "test2")))
     (let [data (first (getByCategory 1))]
