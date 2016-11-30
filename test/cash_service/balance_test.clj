@@ -12,8 +12,6 @@
 
 (deftest test-balance
   (testing "set balance"
-    (is (= ((balance/getItem) :money) 0))
-    (balance/decreaseMoney 2000)
-    (is (= ((balance/getItem) :money) -2000))
-    (balance/increaseMoney 3000)
-    (is (= ((balance/getItem) :money) 1000))))
+    (is (= (balance/getItem) {:id 1 :asset 0 :debt 0}))
+    (balance/setBalance 2000 3000)
+    (is (= (balance/getItem) {:id 1 :asset 2000 :debt 3000}))))

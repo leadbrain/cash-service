@@ -66,7 +66,8 @@
    :id s/Int})
 
 (s/defschema BalanceResponse
-  {:money s/Int})
+  {:asset s/Int
+   :debt s/Int})
 
 (defroutes app
   (api

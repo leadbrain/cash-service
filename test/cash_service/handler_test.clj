@@ -40,7 +40,7 @@
                          {:result "OK" :name "test" :type "asset" :balance 3000}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                         {:money 3000})))
+                         {:asset 3000 :debt 0})))
 
 
   (testing "not-found route"
@@ -54,7 +54,7 @@
                       {:result "OK" :id 2}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                     {:money 0}))
+                     {:asset 0 :debt 0}))
 
     (is (requestAndCheck "/api/v0.1/data/" :post
                       {:input_time 1464787030 :item "test" :amount 3000
@@ -62,7 +62,7 @@
                       {:result "OK"}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                     {:money 3000}))
+                     {:asset 3000 :debt 0}))
 
     (is (requestAndCheck "/api/v0.1/data/" :post
                       {:input_time 1464787040 :item "test" :amount 2000
@@ -70,7 +70,7 @@
                       {:result "OK"}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                     {:money 5000}))
+                     {:asset 5000 :debt 0}))
 
     (is (requestAndCheck "/api/v0.1/category/" :post
                       {:name "cate1" :type :out :money 0}
@@ -82,7 +82,7 @@
                       {:result "OK"}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                     {:money 3000}))))
+                     {:asset 3000 :debt 0}))))
 
 (deftest test-category
   (testing "add"
@@ -111,7 +111,7 @@
                        :from_type "account" :from_id 1 :to_type "category" :to_id 2}]))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                     {:money -2000}))
+                     {:asset -2000 :debt 0}))
 
     (is (requestAndCheck "/api/v0.1/category/" :get {}
                      [{:id 1 :name "none" :type "in" :money 0}
@@ -189,7 +189,7 @@
                          {:result "OK" :name "account debt" :type "debt" :balance 3000}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                         {:money -1000}))
+                         {:asset 2000 :debt 3000}))
 
     (is (requestAndCheck "/api/v0.1/data/" :post
                          {:input_time 1464787040 :item "test" :amount 2000
@@ -200,7 +200,7 @@
                          {:result "OK" :name "account debt" :type "debt" :balance 1000}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                         {:money 1000})))
+                         {:asset 2000 :debt 1000})))
 
   (testing "transfer"
     (is (requestAndCheck "/api/v0.1/account/" :post
@@ -215,25 +215,31 @@
     (is (requestAndCheck "/api/v0.1/account/2/" :get {}
                          {:result "OK" :name "account2" :type "asset" :balance 0}))
 
+    (is (requestAndCheck "/api/v0.1/account/3/" :get {}
+                         {:result "OK" :name "account debt" :type "debt" :balance 1000}))
+
     (is (requestAndCheck "/api/v0.1/account/4/" :get {}
                          {:result "OK" :name "account trans" :type "asset" :balance 2000}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                         {:money 1000}))
+                         {:asset 2000 :debt 1000}))
 
     (is (requestAndCheck "/api/v0.1/data/" :post
-                         {:input_time 1464787040 :item "test" :amount 1000
+                         {:input_time 1464787040 :item "test" :amount 4000
                           :from_type "account" :from_id 3 :to_type "account" :to_id 2}
                          {:result "OK"}))
 
     (is (requestAndCheck "/api/v0.1/account/2/" :get {}
-                         {:result "OK" :name "account2" :type "asset" :balance 1000}))
+                         {:result "OK" :name "account2" :type "asset" :balance 4000}))
 
     (is (requestAndCheck "/api/v0.1/account/3/" :get {}
-                         {:result "OK" :name "account debt" :type "debt" :balance 2000}))
+                         {:result "OK" :name "account debt" :type "debt" :balance 5000}))
+
+    (is (requestAndCheck "/api/v0.1/account/4/" :get {}
+                         {:result "OK" :name "account trans" :type "asset" :balance 2000}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                         {:money 1000}))
+                         {:asset 6000 :debt 5000}))
 
     (is (requestAndCheck "/api/v0.1/data/" :post
                          {:input_time 1464787040 :item "test" :amount 2000
@@ -244,7 +250,7 @@
                          {:result "OK" :name "account trans" :type "asset" :balance 0}))
 
     (is (requestAndCheck "/api/v0.1/account/3/" :get {}
-                         {:result "OK" :name "account debt" :type "debt" :balance 0}))
+                         {:result "OK" :name "account debt" :type "debt" :balance 3000}))
 
     (is (requestAndCheck "/api/v0.1/balance/" :get {}
-                         {:money 1000}))))
+                         {:asset 4000 :debt 3000}))))

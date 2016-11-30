@@ -69,7 +69,7 @@
     {:result "Error"}))
 
 (defn getBalance []
-  {:money ((balance/getItem) :money)})
+  (dissoc (balance/getItem) :id))
 
 
 (defn- increaseMoney [accountId money]
@@ -84,16 +84,8 @@
     (account/decreaseBalance accountId money)))
 
 (defn- updateBalance []
-  (balance/setBalance (- (apply +
-                                (map #(% :balance)
-                                     (into []
-                                           (filter #(= (% :type) "asset")
-                                                   (account/getAccounts)))))
-                         (apply +
-                                (map #(% :balance)
-                                     (into []
-                                           (filter #(= (% :type) "debt")
-                                                   (account/getAccounts))))))))
+  (balance/setBalance (apply + (map #(% :balance) (into [] (filter #(= (% :type) "asset") (account/getAccounts)))))
+                      (apply + (map #(% :balance) (into [] (filter #(= (% :type) "debt") (account/getAccounts)))))))
 
 (defn- spend? [data]
   (if (and (= (data :from_type) "account") (= (data :to_type) "category"))
@@ -126,7 +118,9 @@
 
 (defn- transfer [data]
   (increaseMoney (data :to_id) (data :amount))
-  (decreaseMoney (data :from_id) (data :amount)))
+  (decreaseMoney (data :from_id) (data :amount))
+  (updateBalance))
+
 
 
 (defn- setData [item]

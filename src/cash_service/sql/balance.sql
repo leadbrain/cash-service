@@ -1,18 +1,24 @@
 --name: create-balance-table!
 CREATE TABLE IF NOT EXISTS balance(id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-                                   money INT)
+                                   asset INT,
+                                   debt INt)
 
 --name: set-balance<!
-INSERT INTO balance (money)
-VALUES (:money)
+INSERT INTO balance (asset, debt)
+VALUES (:asset, :debt)
 
---name: update-balance!
+--name: update-asset!
 UPDATE balance
-SET money=(:money)
+SET asset=(:asset)
+WHERE id=(:id)
+
+--name: update-debt!
+UPDATE balance
+SET debt=(:debt)
 WHERE id=(:id)
 
 --name: get-balance
-SELECT id, money
+SELECT id, asset, debt
 FROM balance
 
 --name: drop-balance-table!
