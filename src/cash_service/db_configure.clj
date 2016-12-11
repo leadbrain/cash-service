@@ -8,6 +8,6 @@
 
 (def db-spec {:classname "org.mysql.Driver"
               :subprotocol "mysql"
-              :subname "//localhost/data"
+              :subname "//127.0.0.1/data"
               :user "root"
-              :password "1234"})
+              :password ""})
