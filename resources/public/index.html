@@ -124,7 +124,7 @@
       </div>
       <div class="row" ng-repeat="category in outCategories">
         <div class="col-xs-4">{{category.name}}</div>
-        <div class="col-xs-4">{{category.money}}</div>
+        <div class="col-xs-4">{{category.money.toLocaleString()}}</div>
         <div class="col-xs-4">{{category.type}}</div>
       </div>
       <hr/>
