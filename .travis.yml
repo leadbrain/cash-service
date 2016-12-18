@@ -1,1 +1,5 @@
 language: clojure
+services:
+ - mysql
+before_install:
+ - mysql -e 'CREATE DATABASE data;'

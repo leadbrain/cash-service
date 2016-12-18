@@ -30,10 +30,12 @@
   (get-data-by-category {:category id}))
 
 (defn updateAccount [from to]
-  (update-account! {:from from :to to}))
+  (update-account-from-type! {:from from :to to})
+  (update-account-to-type! {:from from :to to}))
 
 (defn updateCategory [from to]
-  (update-category! {:from from :to to}))
+  (update-category-from-type! {:from from :to to})
+  (update-category-to-type! {:from from :to to}))
 
 (defn anyAccount? [id]
   (not-empty (get-data-by-account {:account id})))

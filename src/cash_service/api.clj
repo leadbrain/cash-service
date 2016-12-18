@@ -8,18 +8,22 @@
 (s/defschema DataResponse
   {:input_time s/Int
    :item s/Str
-   :money s/Int
-   :category s/Int
-   :account s/Int})
+   :amount s/Int
+   :from_type (s/enum :category :account)
+   :from_id s/Int
+   :to_type(s/enum :category :account)
+   :to_id s/Int})
 
 (s/defschema Result
   {:result (s/enum :OK :Error)})
 
 (s/defschema DataRequest
   {:item s/Str
-   :money s/Int
-   :category s/Int
-   :account s/Int
+   :amount s/Int
+   :from_type (s/enum :category :account)
+   :from_id s/Int
+   :to_type(s/enum :category :account)
+   :to_id s/Int
    (s/optional-key :input_time) s/Int})
 
 (s/defschema CategoryRequest
@@ -35,17 +39,24 @@
 
 (s/defschema AccountRequest
   {:name s/Str
-   :balance s/Int})
+   :balance s/Int
+   :type (s/enum :asset :debt)})
 
 (s/defschema AccountResponse
   {:id s/Int
    :name s/Str
+   :type (s/enum :asset :debt)
    :balance s/Int})
 
 (s/defschema AccountSingleResponse
   {:result (s/enum :OK :Error)
    :name s/Str
+   :type (s/enum :asset :debt)
    :balance s/Int})
+
+(s/defschema AccountPutRequest
+  {:id s/Int
+   :money s/Int})
 
 (s/defschema PutRequest
   {:id s/Int})
@@ -55,7 +66,8 @@
    :id s/Int})
 
 (s/defschema BalanceResponse
-  {:money s/Int})
+  {:asset s/Int
+   :debt s/Int})
 
 (defroutes app
   (api

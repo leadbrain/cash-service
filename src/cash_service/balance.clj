@@ -8,7 +8,7 @@
 
 (defn init []
   (create-balance-table!)
-  (set-balance<! {:money 0}))
+  (set-balance<! {:asset 0 :debt 0}))
 
 (defn destroy []
   (drop-balance-table!))
@@ -16,12 +16,7 @@
 (defn getItem []
   (first (get-balance)))
 
-(defn increaseMoney [money]
-  (let [id ((getItem) :id)
-        balance (+ ((getItem) :money) money)]
-    (update-balance! {:id id :money balance})))
-
-(defn decreaseMoney [money]
-  (let [id ((getItem) :id)
-        balance (- ((getItem) :money) money)]
-    (update-balance! {:id id :money balance})))
+(defn setBalance [asset, debt]
+  (let [id ((getItem) :id)]
+    (update-asset! {:id id :asset asset})
+    (update-debt! {:id id :debt debt})))

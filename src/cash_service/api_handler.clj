@@ -1,9 +1,3 @@
-;; File      : api_handler.clj
-;; Author    : YW. Jang
-;; Date      : 2016.07.04
-;;
-;; Copyright 2016, YW. Jang, All rights reserved.
-
 (ns cash-service.api-handler
   (:require [compojure.core :refer :all]
             [cash-service.data :as data]
@@ -18,10 +12,20 @@
 (defn getData []
   (data/getList))
 
+(defn validateData? [type id]
+  (case type
+    "category" (category/contain? id)
+    "account" (account/contain? id)
+    "default" false))
+
 (defn setDataReq [data]
-  (if (and (category/contain? (data :category)) (account/contain? (data :account)))
-    (setData data ))
-  (if (and (category/contain? (data :category)) (account/contain? (data :account)))
+  (if (and (validateData? (name (data :from_type)) (data :from_id))
+           (validateData? (name (data :to_type)) (data :to_id)))
+    (setData (assoc data
+               :from_type (name (data :from_type))
+               :to_type (name (data :to_type)))))
+  (if (and (validateData? (name (data :from_type)) (data :from_id))
+           (validateData? (name (data :to_type)) (data :to_id)))
     {:result "OK"}
     {:result "Error"}))
 
@@ -29,7 +33,7 @@
   (category/getList))
 
 (defn setCategory [data]
-  {:result "OK" :id (-> (assoc data :type (name (data :type))) category/setItem first val)})
+  {:result "OK" :id (category/setItem (assoc data :type (name (data :type))))})
 
 (defn deleteCategory [id]
   (if (not (data/anyCategory? id))
@@ -47,7 +51,7 @@
   (account/getAccounts))
 
 (defn setAccount [data]
-  {:result "OK" :id (account/addAccount data)})
+  {:result "OK" :id (account/addAccount (assoc data :type (name (data :type))))})
 
 (defn getAccount [id]
   (merge {:result "OK"} (account/getAccount id)))
@@ -65,47 +69,87 @@
     {:result "Error"}))
 
 (defn getBalance []
-  {:money ((balance/getItem) :money)})
+  (dissoc (balance/getItem) :id))
 
 
 (defn- increaseMoney [accountId money]
-  (balance/increaseMoney money)
-  (account/increaseBalance accountId money))
+  (if (= (account/getAccountType accountId) "debt")
+    (account/decreaseBalance accountId money)
+    (account/increaseBalance accountId money)))
+
 
 (defn- decreaseMoney [accountId money]
-  (balance/decreaseMoney money)
-  (account/decreaseBalance accountId money))
+  (if (= (account/getAccountType accountId) "debt")
+    (account/increaseBalance accountId money)
+    (account/decreaseBalance accountId money)))
+
+(defn- updateBalance []
+  (balance/setBalance (apply + (map #(% :balance) (into [] (filter #(= (% :type) "asset") (account/getAccounts)))))
+                      (apply + (map #(% :balance) (into [] (filter #(= (% :type) "debt") (account/getAccounts)))))))
+
+(defn- spend? [data]
+  (if (and (= (data :from_type) "account") (= (data :to_type) "category"))
+    (or (and (= (account/getAccountType (data :from_id)) "asset")
+             (= (category/getCategoryType (data :to_id)) "out"))
+        (and (= (account/getAccountType (data :from_id)) "debt")
+             (= (category/getCategoryType (data :to_id)) "out")))
+    false))
+
+(defn- spend [data]
+  (decreaseMoney (data :from_id) (data :amount))
+  (updateBalance)
+  (category/increaseMoney (data :to_id) (data :amount)))
+
+(defn- income? [data]
+  (if (and (= (data :from_type) "category") (= (data :to_type) "account"))
+    (or (and (= (category/getCategoryType (data :from_id)) "in")
+             (= (account/getAccountType (data :to_id)) "asset"))
+        (and (= (category/getCategoryType (data :from_id)) "in")
+             (= (account/getAccountType (data :to_id)) "debt")))
+    false))
+
+(defn- income [data]
+  (increaseMoney (data :to_id) (data :amount))
+  (updateBalance)
+  (category/increaseMoney (data :from_id) (data :amount)))
+
+(defn- transfer? [data]
+  (and (= (data :from_type) "account") (= (data :to_type) "account")))
+
+(defn- transfer [data]
+  (increaseMoney (data :to_id) (data :amount))
+  (decreaseMoney (data :from_id) (data :amount))
+  (updateBalance))
+
+
 
 (defn- setData [item]
   (data/setItem item)
-  (case ((category/getItem (item :category)) :type)
-    "in" (increaseMoney (item :account) (item :money))
-    "out" (decreaseMoney (item :account) (item :money))
-    "default" (print (item :type)))
-  (category/increaseMoney (item :category) (item :money)))
-
-(defn- get-base-uri [request]
-  (let [scheme (name (:scheme request))
-      context (:context request)
-      hostname (get (:headers request) "host")]
-    (str scheme "://" hostname context)))
+  (if (spend? item)
+    (spend item))
+  (if (income? item)
+    (income item))
+  (if (transfer? item)
+    (transfer item)))
 
 (defn- updateAccount [from to]
   (data/updateAccount from to)
   (account/swap from to))
 
 (defn- swapAccount [from to]
-  (def success (and (account/contain? from) (account/contain? to)))
-  (if success
-    (updateAccount from to))
-  success)
+  (let [success (and (account/contain? from) (account/contain? to))]
+    (if success
+      (updateAccount from to))
+    success))
 
 (defn- updateCategory [from to]
   (data/updateCategory from to)
   (category/swap from to))
 
 (defn- swapCategory [from to]
-  (def success (and (category/contain? from) (category/contain? to) (category/sameType? from to)))
-  (if success
-    (updateCategory from to))
-  success)
+  (let [success (and (category/contain? from)
+                    (category/contain? to)
+                    (category/sameType? from to))]
+    (if success
+      (updateCategory from to))
+    success))
