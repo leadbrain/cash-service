@@ -14,27 +14,80 @@
 	<body ng-controller="cashController">
     <div class="container">
       <h1> Cash Plan </h1>
-      <div class="row">
-        <div class="col-sm-3">
-          <input type="text" placeholder ="내용" ng-model="item" class="form-control">
-        </div>
-        <div class="col-sm-3">
-          <input type="text" placeholder ="가격" ng-model="money" class="form-control">
-        </div>
-        <div class="col-sm-2">
-          <input type="text" ng-model="selectedCategory" placeholder="카테고리 선택" uib-typeahead="x as x.name  for x in categories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
-        </div>
-        <div class="col-sm-2">
-          <input type="text" ng-model="selectedAccount" placeholder="계좌 선택" uib-typeahead="x as x.name  for x in accounts | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
-        </div>
-        <div class="col-sm-2">
-          <button type="button" class="btn btn-primary" ng-click="addData()">
-            입력
-          </button>
-        </div>
-      </div>
 
-      <br/>
+      <form>
+      <uib-tabset active="active">
+        <uib-tab index="0" heading="지출">
+          <br/>
+          <div class="row">
+            <div class="col-sm-3">
+              <input type="text" placeholder ="내용" ng-model="input.item" class="form-control">
+            </div>
+            <div class="col-sm-3">
+              <input type="text" placeholder ="가격" ng-model="input.money" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <input type="text" ng-model="input.spendCategory" placeholder="카테고리 선택" uib-typeahead="x as x.name  for x in outCategories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <input type="text" ng-model="input.spendAccount" placeholder="계좌 선택" uib-typeahead="x as x.name  for x in accounts | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <button type="button" class="btn btn-primary" ng-click="addSpendData()">
+                입력
+              </button>
+            </div>
+          </div>
+        </uib-tab>
+        <uib-tab index="1" heading="수입">
+          <br/>
+          <div class="row">
+            <div class="col-sm-3">
+              <input type="text" placeholder ="내용" ng-model="input.item" class="form-control">
+            </div>
+            <div class="col-sm-3">
+              <input type="text" placeholder ="가격" ng-model="input.money" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <input type="text" ng-model="input.incomeCategory" placeholder="카테고리 선택" uib-typeahead="x as x.name  for x in inCategories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <input type="text" ng-model="input.incomeAccount" placeholder="계좌 선택" uib-typeahead="x as x.name  for x in accounts | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <button type="button" class="btn btn-primary" ng-click="addIncomeData()">
+                입력
+              </button>
+            </div>
+          </div>
+        </uib-tab>
+
+        <uib-tab index="2" heading="계좌이체">
+          <br/>
+          <div class="row">
+            <div class="col-sm-3">
+              <input type="text" placeholder ="내용" ng-model="input.item" class="form-control">
+            </div>
+            <div class="col-sm-3">
+              <input type="text" placeholder ="가격" ng-model="input.money" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <input type="text" ng-model="input.fromAccount" placeholder="보낼 계좌 선택" uib-typeahead="x as x.name  for x in accounts | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <input type="text" ng-model="input.toAccount" placeholder="받을 계좌 선택" uib-typeahead="x as x.name  for x in accounts | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+            </div>
+            <div class="col-sm-2">
+              <button type="button" class="btn btn-primary" ng-click="addTransferData()">
+                입력
+              </button>
+            </div>
+          </div>
+        </uib-tab>
+        </uib-tabset>
+      </form>
+
+      <hr/>
 
       <div class="row" style="background-color:silver">
         <div class="col-xs-2">날짜</div>
@@ -46,73 +99,94 @@
       <div class="row" ng-repeat="data in datas">
         <div class="col-xs-2">{{data.input_time}}</div>
         <div class="col-xs-2">{{data.item}}</div>
-        <div class="col-xs-2">{{data.money}}</div>
-        <div class="col-xs-2">{{data.category}}</div>
-        <div class="col-xs-2">{{data.account}}</div>
+        <div class="col-xs-2">{{data.amount}}</div>
+        <div class="col-xs-2">{{data.from_name}}</div>
+        <div class="col-xs-2">{{data.to_name}}</div>
       </div>
       <div class="row">
-        <div class="col-xs-6">총계</div>
-        <div class="col-xs-6">{{balance}}</div>
+        <div class="col-xs-3">자산</div>
+        <div class="col-xs-3">{{asset}}</div>
+        <div class="col-xs-3">부채</div>
+        <div class="col-xs-3">{{debt}}</div>
       </div>
 
-      <br/>
+      <hr/>
 
       <div class="row" style="background-color:silver">
         <div class="col-xs-4">카테고리</div>
         <div class="col-xs-4">잔고</div>
         <div class="col-xs-4">type</div>
       </div>
-      <div class="row" ng-repeat="category in categories">
+      <div class="row" ng-repeat="category in inCategories">
         <div class="col-xs-4">{{category.name}}</div>
         <div class="col-xs-4">{{category.money}}</div>
         <div class="col-xs-4">{{category.type}}</div>
       </div>
-      <br/>
+      <div class="row" ng-repeat="category in outCategories">
+        <div class="col-xs-4">{{category.name}}</div>
+        <div class="col-xs-4">{{category.money}}</div>
+        <div class="col-xs-4">{{category.type}}</div>
+      </div>
+      <hr/>
       <div class="row" style="background-color:silver">
-        <div class="col-xs-6">계좌</div>
-        <div class="col-xs-6">잔고</div>
+        <div class="col-xs-4">계좌</div>
+        <div class="col-xs-4">잔고</div>
+        <div class="col-xs-4">type</div>
       </div>
       <div class="row" ng-repeat="account in accounts">
-        <div class="col-xs-6">{{account.name}}</div>
-        <div class="col-xs-6">{{account.balance}}</div>
+        <div class="col-xs-4">{{account.name}}</div>
+        <div class="col-xs-4">{{account.balance}}</div>
+        <div class="col-xs-4">{{account.type}}</div>
       </div>
 
-      <br/>
+      <hr/>
 
       <button type="button" class="btn btn-default" ng-click="isCollapsed = !isCollapsed">설정</button>
-      <hr>
       <div uib-collapse="isCollapsed">
         <div class="well well-lg">
           <div class="row">
-          <div class="col-sm-3">
-            <input type="text" placeholder ="카테고리" ng-model="newCategory" class="form-control">
-            <div class="btn-group">
-              <label class="btn btn-success" ng-model="newCategoryType" uib-btn-radio="'in'" uncheckable>수입</label>
-              <label class="btn btn-success" ng-model="newCategoryType" uib-btn-radio="'out'" uncheckable>지출</label>
+            <div class="col-sm-4">
+              <input type="text" placeholder ="카테고리" ng-model="newCategory" class="form-control">
+              <div class="btn-group">
+                <label class="btn btn-success" ng-model="newCategoryType" uib-btn-radio="'in'" uncheckable>수입</label>
+                <label class="btn btn-success" ng-model="newCategoryType" uib-btn-radio="'out'" uncheckable>지출</label>
+              </div>
+              <button type="button" class="btn btn-primary" ng-click="addCategory()">
+                추가
+              </button>
             </div>
-            <button type="button" class="btn btn-primary" ng-click="addCategory()">
-              추가
-            </button>
+            <div class="col-sm-4">
+              <input type="text" ng-model="toDeleteCategory" placeholder="삭제할 카테고리" uib-typeahead="x as x.name  for x in inCategories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+              <button type="button" class="btn btn-primary" ng-click="deleteCategory()">
+                삭제
+              </button>
+            </div>
+            <div class="col-sm-4">
+              <input type="text" ng-model="toDeleteCategory" placeholder="삭제할 카테고리" uib-typeahead="x as x.name  for x in outCategories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+              <button type="button" class="btn btn-primary" ng-click="deleteCategory()">
+                삭제
+              </button>
+            </div>
           </div>
-          <div class="col-sm-3">
-            <input type="text" ng-model="toDeleteCategory" placeholder="삭제할 카테고리" uib-typeahead="x as x.name  for x in categories | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
-            <button type="button" class="btn btn-primary" ng-click="deleteCategory()">
-              삭제
-            </button>
+          <br/>
+          <div class="row">
+            <div class="col-sm-6">
+              <input type="text" placeholder ="계좌" ng-model="newAccount" class="form-control">
+              <div class="btn-group">
+                <label class="btn btn-success" ng-model="newAccountType" uib-btn-radio="'asset'" uncheckable>자산</label>
+                <label class="btn btn-success" ng-model="newAccountType" uib-btn-radio="'debt'" uncheckable>부채</label>
+              </div>
+              <button type="button" class="btn btn-primary" ng-click="addAccount()">
+                추가
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <input type="text" ng-model="toDeleteAccount" placeholder="삭제할 계좌" uib-typeahead="x as x.name  for x in accounts | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
+              <button type="button" class="btn btn-primary" ng-click="deleteAccount()">
+                삭제
+              </button>
+            </div>
           </div>
-          <div class="col-sm-3">
-            <input type="text" placeholder ="계좌" ng-model="newAccount" class="form-control">
-            <button type="button" class="btn btn-primary" ng-click="addAccount()">
-              추가
-            </button>
-          </div>
-          <div class="col-sm-3">
-            <input type="text" ng-model="toDeleteAccount" placeholder="삭제할 계좌" uib-typeahead="x as x.name  for x in accounts | filter:{name:$viewValue} | limitTo:8" typeahead-show-hint="true" typeahead-min-length="0" class="form-control">
-            <button type="button" class="btn btn-primary" ng-click="deleteAccount()">
-              삭제
-            </button>
-          </div>
-        </div>
         </div>
       </div>
     </div>
